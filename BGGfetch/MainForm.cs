@@ -22,7 +22,7 @@ namespace BGGfetch
 
         void GameTextBoxTextChanged(object sender, EventArgs e)
         {
-
+            this.gameCountToolStripStatusLabel.Text = this.gameTextBox.Lines.Length.ToString();
         }
 
         void BrowseButtonClick(object sender, EventArgs e)
@@ -45,7 +45,7 @@ namespace BGGfetch
             // Something to work with
             if (this.gameTextBox.Text.Length == 0)
             {
-                MessageBox.Show("Please enter at least one game to continue.", "Games", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                MessageBox.Show("Please enter at least one game to continue.", "Games", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 this.gameTextBox.Focus();
 
@@ -55,7 +55,7 @@ namespace BGGfetch
             // Valid directory
             if (!Directory.Exists(this.directoryTextBox.Text))
             {
-                MessageBox.Show("Target save directory must exist.", "Directory", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                MessageBox.Show("Target save directory must exist.", "Directory", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 this.directoryTextBox.Focus();
 
