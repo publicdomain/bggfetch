@@ -38,6 +38,8 @@ namespace BGGfetch
         void BrowserFormFormClosing(object sender, FormClosingEventArgs e)
         {
             this.fetchedCountToolStripStatusLabel.Text = $"{this.browserForm.Index}";
+
+            this.startButton.Enabled = true;
         }
 
         void StartButtonClick(object sender, EventArgs e)
@@ -65,6 +67,7 @@ namespace BGGfetch
             this.startButton.Enabled = false;
 
             this.browserForm = new BrowserForm(new List<string>(this.gameTextBox.Lines), this.directoryTextBox.Text);
+            this.browserForm.Icon = this.Icon;
             this.browserForm.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BrowserFormFormClosing);
             this.browserForm.ShowDialog();
         }
