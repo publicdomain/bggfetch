@@ -45,7 +45,9 @@ namespace BGGfetch
             // Something to work with
             if (this.gameTextBox.Text.Length == 0)
             {
-                MessageBox.Show("Please enter at least one game to continue.", "Games", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show("Please enter at least one game to continue.", "Games", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+
+                this.gameTextBox.Focus();
 
                 return;
             }
@@ -53,7 +55,9 @@ namespace BGGfetch
             // Valid directory
             if (!Directory.Exists(this.directoryTextBox.Text))
             {
-                MessageBox.Show("Target save directory must exist.", "Directory", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show("Target save directory must exist.", "Directory", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+
+                this.directoryTextBox.Focus();
 
                 return;
             }
