@@ -62,6 +62,11 @@ namespace BGGfetch
         DataTable dataTable = new DataTable();
 
         /// <summary>
+        /// The last download date time.
+        /// </summary>
+        DateTime lastDownloadDateTime = DateTime.Now;
+
+        /// <summary>
         /// Gets the count.
         /// </summary>
         /// <value>The count.</value>
@@ -85,7 +90,24 @@ namespace BGGfetch
 
             this.directory = directory;
 
+            this.gameDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+
             searchWebClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnSearchDownloadStringCompleted);
+        }
+
+        /// <summary>
+        /// Supers the trim.
+        /// </summary>
+        /// <returns>The trim.</returns>
+        /// <param name="inputString">Input string.</param>
+        private static string TrimAll(string inputString)
+        {
+            if (String.IsNullOrEmpty(inputString))
+            {
+                return inputString;
+            }
+
+            return inputString.Trim().Replace("\r\n", string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty);
         }
 
         /// <summary>
@@ -124,7 +146,20 @@ namespace BGGfetch
 
                     foreach (var col in row.Descendants("td"))
                     {
-                        dataRow[i] = col.InnerText.Trim()/*.Replace(Environment.NewLine, " ").Replace("\t", string.Empty)*/;
+                        var aTitle = col.SelectSingleNode(".//a");
+                        var spanYear = col.SelectSingleNode(".//span");
+                        var pDesc = col.SelectSingleNode(".//p");
+
+                        this.Text = "A";
+                        try
+                        {
+                            dataRow[i] = $"{TrimAll(aTitle.InnerText)} {TrimAll(spanYear.InnerText)}{(pDesc.InnerText.Length > 0 ? $"{Environment.NewLine}{TrimAll(pDesc.InnerText)}" : string.Empty)}";
+
+                        }
+                        catch (Exception ex)
+                        {
+                            dataRow[i] = col.InnerText.Trim();
+                        }
 
                         i++;
 
@@ -140,6 +175,9 @@ namespace BGGfetch
 
                 // reset search retries
                 this.searchRetries = 0;
+
+                // Advise user
+                this.Text = "Please click on next gane to process";
             }
             else
             {
@@ -158,7 +196,7 @@ namespace BGGfetch
         {
             if (this.gameList.Count > 0)
             {
-                this.Text = $"Fetching search results.{ (this.searchRetries > 0 ? $"Retries: {this.searchRetries}" : string.Empty)}";
+                this.Text = $"Fetching search results...{ (this.searchRetries > 0 ? $" Retries: {this.searchRetries}" : string.Empty)}";
 
                 this.searchWebClient.DownloadStringAsync(new Uri($"https://boardgamegeek.com/geeksearch.php?action=search&objecttype=boardgame&q={Uri.EscapeDataString(this.gameList[0])}"));
             }
@@ -195,6 +233,15 @@ namespace BGGfetch
         /// <param name="e">E.</param>
         void TimerTick(object sender, EventArgs e)
         {
+            TimeSpan timeDiff = DateTime.Now - this.lastDownloadDateTime;
+
+            if (timeDiff.TotalSeconds < 5)
+            {
+                // Halt flow
+                return;
+            }
+
+            // Initiate download
 
         }
 
@@ -205,7 +252,7 @@ namespace BGGfetch
         /// <param name="e">E.</param>
         void GameDataGridViewCellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
+            // e.RowIndex
         }
     }
 }
