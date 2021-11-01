@@ -70,7 +70,9 @@ namespace BGGfetch
             {
                 Icon = this.Icon
             };
+
             this.fetchForm.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FetchFormFormClosing);
+
             this.fetchForm.ShowDialog();
         }
 

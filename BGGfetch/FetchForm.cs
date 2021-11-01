@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using HtmlAgilityPack;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.IO;
+using System.ComponentModel;
+using System.Timers;
 
 namespace BGGfetch
 {
@@ -22,11 +26,6 @@ namespace BGGfetch
         int count = 0;
 
         /// <summary>
-        /// The search retries.
-        /// </summary>
-        int searchRetries = 0;
-
-        /// <summary>
         /// The game list.
         /// </summary>
         List<string> gameList;
@@ -37,34 +36,34 @@ namespace BGGfetch
         string directory;
 
         /// <summary>
-        /// The web client.
+        /// The file path.
         /// </summary>
-        WebClient searchWebClient = new WebClient();
-
-        /// <summary>
-        /// The download web client.
-        /// </summary>
-        WebClient downloadWebClient = new WebClient();
-
-        /// <summary>
-        /// The html.
-        /// </summary>
-        string html = string.Empty;
-
-        /// <summary>
-        /// The xml.
-        /// </summary>
-        string xml = string.Empty;
+        string filePath;
 
         /// <summary>
         /// The data table.
         /// </summary>
-        DataTable dataTable = new DataTable();
+        DataTable dataTable = null;
 
         /// <summary>
         /// The last download date time.
         /// </summary>
-        DateTime lastDownloadDateTime = DateTime.Now;
+        DateTime lastXmlApiDownloadDateTime = DateTime.Now;
+
+        /// <summary>
+        /// The game download row list.
+        /// </summary>
+        List<string> gameDownloadRowList = new List<string>();
+
+        /// <summary>
+        /// The downloaded image list.
+        /// </summary>
+        List<string> downloadedImageList = new List<string>();
+
+        /// <summary>
+        /// The image timer.
+        /// </summary>
+        System.Timers.Timer imageTimer = new System.Timers.Timer(1000);
 
         /// <summary>
         /// Gets the count.
@@ -86,48 +85,95 @@ namespace BGGfetch
             // The InitializeComponent() call is required for Windows Forms designer support.
             this.InitializeComponent();
 
+            // SSL fix
+            System.Net.ServicePointManager.Expect100Continue = true;
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+
             this.gameList = gameList;
 
             this.directory = directory;
 
-            this.gameDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            imageTimer.AutoReset = false;
 
-            searchWebClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnSearchDownloadStringCompleted);
+            imageTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsedAsync);
         }
 
+
         /// <summary>
-        /// Supers the trim.
+        /// Prepare the specified inputString.
         /// </summary>
-        /// <returns>The trim.</returns>
+        /// <returns>The prepare.</returns>
         /// <param name="inputString">Input string.</param>
-        private static string TrimAll(string inputString)
+        private static string Clean(string inputString)
         {
             if (String.IsNullOrEmpty(inputString))
             {
                 return inputString;
             }
 
-            return inputString.Trim().Replace("\r\n", string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty);
+            return Regex.Replace(inputString.Trim(), @"\t|\n|\r", string.Empty);
         }
 
         /// <summary>
-        /// Handles the search download string completed.
+        /// Gets the name of the valid directory.
         /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
-        private void OnSearchDownloadStringCompleted(Object sender, DownloadStringCompletedEventArgs e)
+        /// <returns>The valid directory name.</returns>
+        /// <param name="directoryName">Directory name.</param>
+        private string GetValidDirectoryName(string directoryName)
         {
-            if (!e.Cancelled && e.Error == null)
+            var invalidCharList = new List<char>();
+
+            invalidCharList.AddRange(Path.GetInvalidFileNameChars());
+
+            invalidCharList.AddRange(Path.GetInvalidPathChars());
+
+            foreach (var c in invalidCharList)
             {
-                this.html = e.Result;
+                directoryName = directoryName.Replace(c.ToString(), string.Empty);
+            }
+
+            return directoryName;
+        }
+
+        /// <summary>
+        /// Processes the search.
+        /// </summary>
+        private async void ProcessSearchToDataGridViewAsync()
+        {
+            if (this.gameList.Count > 0)
+            {
+                this.gameDownloadRowList.Clear();
+
+                var html = string.Empty;
+
+                var retries = 0;
+
+            retrylabel:
+
+                this.Text = $"Fetching search results for \"{this.gameList[0]}\"...{ (retries > 0 ? $" Retries: {retries}" : string.Empty)}";
+
+                WebClient webClient = new WebClient();
+
+                html = await webClient.DownloadStringTaskAsync(new Uri($"https://boardgamegeek.com/geeksearch.php?action=search&objecttype=boardgame&q={Uri.EscapeDataString(this.gameList[0])}"));
+
+                /*TODO if ()
+                {
+                    retries++;
+
+                    goto retrylabel;
+                }*/
+
+                /* Parse */
 
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
 
-                doc.LoadHtml(e.Result);
+                doc.LoadHtml(html);
 
                 var table = doc.DocumentNode.SelectSingleNode("//table");
                 var tableRows = table.SelectNodes("tr");
                 var columns = tableRows[0].SelectNodes("th");
+
+                this.dataTable = new DataTable();
 
                 // Set headers
                 foreach (HtmlNode col in doc.DocumentNode.SelectNodes("//table[@id='collectionitems']//tr/th"))
@@ -147,16 +193,26 @@ namespace BGGfetch
                     foreach (var col in row.Descendants("td"))
                     {
                         var aTitle = col.SelectSingleNode(".//a");
+
                         var spanYear = col.SelectSingleNode(".//span");
-                        var pDesc = col.SelectSingleNode(".//p");
 
-                        this.Text = "A";
-                        try
+                        if (spanYear != null && !aTitle.InnerText.Contains("Shop"))
                         {
-                            dataRow[i] = $"{TrimAll(aTitle.InnerText)} {TrimAll(spanYear.InnerText)}{(pDesc.InnerText.Length > 0 ? $"{Environment.NewLine}{TrimAll(pDesc.InnerText)}" : string.Empty)}";
+                            var pDesc = col.SelectSingleNode(".//p");
 
+                            var id = new DirectoryInfo(aTitle.GetAttributeValue("href", string.Empty)).Parent.Name;
+                            var title = Clean(aTitle.InnerText);
+                            var year = $" {Clean(spanYear.InnerText)}";
+                            var description = pDesc != null ? $"{Environment.NewLine}{Clean(pDesc.InnerText)}" : string.Empty;
+                            var fullTitle = $"{title}{year}";
+
+                            // Set row
+                            dataRow[i] = $"{title}{year}{description}";
+
+                            // Add to list
+                            this.gameDownloadRowList.Add($"{id} | {fullTitle}");
                         }
-                        catch (Exception ex)
+                        else
                         {
                             dataRow[i] = col.InnerText.Trim();
                         }
@@ -167,42 +223,25 @@ namespace BGGfetch
                     }
 
                     if (hasCells)
-                    { this.dataTable.Rows.Add(dataRow); }
+                    {
+                        this.dataTable.Rows.Add(dataRow);
+                    }
                 }
 
                 this.gameDataGridView.DataSource = null;
                 this.gameDataGridView.DataSource = this.dataTable;
-
-                // reset search retries
-                this.searchRetries = 0;
+                this.gameDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+                this.gameDataGridView.AutoResizeColumns();
+                this.gameDataGridView.Refresh();
+                this.gameDataGridView.ClearSelection();
+                this.gameDataGridView.CurrentCell = null;
 
                 // Advise user
-                this.Text = "Please click on next gane to process";
+                this.Text = "Please click next gane title cell to process";
             }
             else
             {
-                // Raise
-                this.searchRetries++;
-
-                // Retry
-                this.ProcessSearchToListView();
-            }
-        }
-
-        /// <summary>
-        /// Processes the search.
-        /// </summary>
-        private void ProcessSearchToListView()
-        {
-            if (this.gameList.Count > 0)
-            {
-                this.Text = $"Fetching search results...{ (this.searchRetries > 0 ? $" Retries: {this.searchRetries}" : string.Empty)}";
-
-                this.searchWebClient.DownloadStringAsync(new Uri($"https://boardgamegeek.com/geeksearch.php?action=search&objecttype=boardgame&q={Uri.EscapeDataString(this.gameList[0])}"));
-            }
-            else
-            {
-                this.gameDataGridView.Enabled = false;
+                this.Text = "All games searched.";
             }
         }
 
@@ -213,7 +252,7 @@ namespace BGGfetch
         /// <param name="e">E.</param>
         void FetchFormLoad(object sender, EventArgs e)
         {
-
+            imageTimer.Start();
         }
 
         /// <summary>
@@ -223,26 +262,7 @@ namespace BGGfetch
         /// <param name="e">E.</param>
         void FetchFormShown(object sender, EventArgs e)
         {
-            this.ProcessSearchToListView();
-        }
-
-        /// <summary>
-        /// Timers the tick.
-        /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
-        void TimerTick(object sender, EventArgs e)
-        {
-            TimeSpan timeDiff = DateTime.Now - this.lastDownloadDateTime;
-
-            if (timeDiff.TotalSeconds < 5)
-            {
-                // Halt flow
-                return;
-            }
-
-            // Initiate download
-
+            this.ProcessSearchToDataGridViewAsync();
         }
 
         /// <summary>
@@ -250,9 +270,105 @@ namespace BGGfetch
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">E.</param>
-        void GameDataGridViewCellContentClick(object sender, DataGridViewCellEventArgs e)
+        void GameDataGridViewCellContentClickAsync(object sender, DataGridViewCellEventArgs e)
         {
-            // e.RowIndex
+            // Blank it
+            this.gameDataGridView.DataSource = null;
+
+            // Add to download list
+            this.downloadListBox.Items.Add(this.gameDownloadRowList[e.RowIndex]);
+
+            // Start the image download timer
+            this.imageTimer.Start();
+
+            if (this.gameList.Count > 0)
+            {
+                // Remove from game list
+                this.gameList.RemoveAt(0);
+
+                this.ProcessSearchToDataGridViewAsync();
+            }
+            else
+            {
+                this.Text = "All games searched.";
+            }
+        }
+
+        /// <summary>
+        /// Ons the timer elapsed.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
+        public async void OnTimerElapsedAsync(object sender, ElapsedEventArgs e)
+        {
+            // Basic checks
+            if (this.downloadListBox.Items.Count == 0)
+            {
+                this.imageTimer.Stop();
+
+                return;
+            }
+
+            // Diff check
+            TimeSpan timeDiff = DateTime.Now - this.lastXmlApiDownloadDateTime;
+
+            if (timeDiff.TotalSeconds < 5)
+            {
+                return;
+            }
+
+            /* Download image */
+
+            var xml = string.Empty;
+
+            var item = this.downloadListBox.Items[0].ToString().Split(new string[] { " | " }, StringSplitOptions.None);
+
+            var id = item[0];
+            var title = item[1];
+
+            this.browserToolStripStatusLabel.Text = $"Downloading image for: \"{title}\"...";
+
+            WebClient webClient = new WebClient();
+
+            // Download xml for game id
+            xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
+
+            // Set new datetime
+            this.lastXmlApiDownloadDateTime = DateTime.Now;
+
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+            doc.LoadHtml(xml);
+
+            var image = doc.DocumentNode.SelectSingleNode("//image");
+
+            var directoryPath = Path.Combine(this.directory, this.GetValidDirectoryName(title));
+
+            this.filePath = Path.Combine(directoryPath, Path.GetFileName(image.InnerHtml));
+
+            Directory.CreateDirectory(directoryPath);
+
+            await webClient.DownloadFileTaskAsync(new Uri(image.InnerHtml), this.filePath);
+
+            if (File.Exists(this.filePath))
+            {
+                // Success
+                this.downloadListBox.Items.RemoveAt(0);
+            }
+
+
+            if (this.downloadListBox.Items.Count > 0)
+            {
+                // Next item
+                this.imageTimer.Start();
+            }
+            else
+            {
+                // All done
+                this.downloadListBox.Enabled = false;
+
+                this.browserToolStripStatusLabel.Text = "All game images downloaded.";
+            }
         }
     }
 }
