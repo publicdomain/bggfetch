@@ -152,24 +152,33 @@ namespace BGGfetch
 
                 this.Text = $"Fetching search results for \"{this.gameList[0]}\"...{ (retries > 0 ? $" Retries: {retries}" : string.Empty)}";
 
-                WebClient webClient = new WebClient();
-
-                html = await webClient.DownloadStringTaskAsync(new Uri($"https://boardgamegeek.com/geeksearch.php?action=search&objecttype=boardgame&q={Uri.EscapeDataString(this.gameList[0])}"));
-
-                /*TODO if ()
+                WebClient webClient = new WebClient
                 {
-                    retries++;
-
-                    goto retrylabel;
-                }*/
+                    Proxy = null
+                };
 
                 /* Parse */
 
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
 
-                doc.LoadHtml(html);
+                HtmlNode table = null;
 
-                var table = doc.DocumentNode.SelectSingleNode("//table");
+                try
+                {
+                    html = await webClient.DownloadStringTaskAsync(new Uri($"https://boardgamegeek.com/geeksearch.php?action=search&objecttype=boardgame&q={Uri.EscapeDataString(this.gameList[0])}"));
+
+                    doc.LoadHtml(html);
+
+                    table = doc.DocumentNode.SelectSingleNode("//table");
+                }
+                catch
+                {
+                    // Retry until fetched or window closes
+                    retries++;
+
+                    goto retrylabel;
+                }
+
                 var tableRows = table.SelectNodes("tr");
                 var columns = tableRows[0].SelectNodes("th");
 
@@ -319,43 +328,52 @@ namespace BGGfetch
 
             /* Download image */
 
-            var xml = string.Empty;
-
-            var item = this.downloadListBox.Items[0].ToString().Split(new string[] { " | " }, StringSplitOptions.None);
-
-            var id = item[0];
-            var title = item[1];
-
-            this.browserToolStripStatusLabel.Text = $"Downloading image for: \"{title}\"...";
-
-            WebClient webClient = new WebClient();
-
-            // Download xml for game id
-            xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
-
-            // Set new datetime
-            this.lastXmlApiDownloadDateTime = DateTime.Now;
-
-            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-
-            doc.LoadHtml(xml);
-
-            var image = doc.DocumentNode.SelectSingleNode("//image");
-
-            var directoryPath = Path.Combine(this.directory, this.GetValidDirectoryName(title));
-
-            this.filePath = Path.Combine(directoryPath, Path.GetFileName(image.InnerHtml));
-
-            Directory.CreateDirectory(directoryPath);
-
-            await webClient.DownloadFileTaskAsync(new Uri(image.InnerHtml), this.filePath);
-
-            if (File.Exists(this.filePath))
+            try
             {
-                // Success
-                this.downloadListBox.Items.RemoveAt(0);
-            }
+                var xml = string.Empty;
 
+                var item = this.downloadListBox.Items[0].ToString().Split(new string[] { " | " }, StringSplitOptions.None);
+
+                var id = item[0];
+                var title = item[1];
+
+                this.browserToolStripStatusLabel.Text = $"Downloading image for: \"{title}\"...";
+
+                WebClient webClient = new WebClient
+                {
+                    Proxy = null
+                };
+
+                // Download xml for game id
+                xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
+
+                // Set new datetime
+                this.lastXmlApiDownloadDateTime = DateTime.Now;
+
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+                doc.LoadHtml(xml);
+
+                var image = doc.DocumentNode.SelectSingleNode("//image");
+
+                var directoryPath = Path.Combine(this.directory, this.GetValidDirectoryName(title));
+
+                this.filePath = Path.Combine(directoryPath, Path.GetFileName(image.InnerHtml));
+
+                Directory.CreateDirectory(directoryPath);
+
+                await webClient.DownloadFileTaskAsync(new Uri(image.InnerHtml), this.filePath);
+
+                if (File.Exists(this.filePath))
+                {
+                    // Success
+                    this.downloadListBox.Items.RemoveAt(0);
+                }
+            }
+            catch
+            {
+                // Let it fall through for next iteration
+            }
 
             if (this.downloadListBox.Items.Count > 0)
             {
