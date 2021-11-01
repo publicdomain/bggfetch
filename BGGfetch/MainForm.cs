@@ -12,7 +12,7 @@ namespace BGGfetch
     /// </summary>
     public partial class MainForm : Form
     {
-        BrowserForm browserForm = null;
+        FetchForm fetchForm = null;
 
         public MainForm()
         {
@@ -35,9 +35,9 @@ namespace BGGfetch
             }
         }
 
-        void BrowserFormFormClosing(object sender, FormClosingEventArgs e)
+        void FetchFormFormClosing(object sender, FormClosingEventArgs e)
         {
-            this.fetchedCountToolStripStatusLabel.Text = $"{this.browserForm.Index}";
+            this.fetchedCountToolStripStatusLabel.Text = $"{this.fetchForm.Count}";
 
             this.startButton.Enabled = true;
         }
@@ -66,10 +66,12 @@ namespace BGGfetch
 
             this.startButton.Enabled = false;
 
-            this.browserForm = new BrowserForm(new List<string>(this.gameTextBox.Lines), this.directoryTextBox.Text);
-            this.browserForm.Icon = this.Icon;
-            this.browserForm.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BrowserFormFormClosing);
-            this.browserForm.ShowDialog();
+            this.fetchForm = new FetchForm(new List<string>(this.gameTextBox.Lines), this.directoryTextBox.Text)
+            {
+                Icon = this.Icon
+            };
+            this.fetchForm.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FetchFormFormClosing);
+            this.fetchForm.ShowDialog();
         }
 
         void NewToolStripMenuItemClick(object sender, EventArgs e)
@@ -87,11 +89,6 @@ namespace BGGfetch
 
         }
 
-        void ExitToolStripMenuItemClick(object sender, EventArgs e)
-        {
-
-        }
-
         void AboutToolStripMenuItemClick(object sender, EventArgs e)
         {
 
@@ -103,6 +100,11 @@ namespace BGGfetch
         }
 
         void SourceCodeGithubcomToolStripMenuItemClick(object sender, EventArgs e)
+        {
+
+        }
+
+        void ExitToolStripMenuItemClick(object sender, EventArgs e)
         {
 
         }
