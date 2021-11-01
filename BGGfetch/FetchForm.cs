@@ -261,7 +261,6 @@ namespace BGGfetch
         /// <param name="e">E.</param>
         void FetchFormLoad(object sender, EventArgs e)
         {
-            imageTimer.Start();
         }
 
         /// <summary>
@@ -385,7 +384,7 @@ namespace BGGfetch
                 // All done
                 this.downloadListBox.Enabled = false;
 
-                this.browserToolStripStatusLabel.Text = "All game images downloaded.";
+                this.browserToolStripStatusLabel.Text = "All queued game images downloaded.";
             }
         }
     }

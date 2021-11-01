@@ -12,8 +12,14 @@ namespace BGGfetch
     /// </summary>
     public partial class MainForm : Form
     {
+        /// <summary>
+        /// The fetch form.
+        /// </summary>
         FetchForm fetchForm = null;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:BGGfetch.MainForm"/> class.
+        /// </summary>
         public MainForm()
         {
             // The InitializeComponent() call is required for Windows Forms designer support.
@@ -68,7 +74,8 @@ namespace BGGfetch
 
             this.fetchForm = new FetchForm(new List<string>(this.gameTextBox.Lines), this.directoryTextBox.Text)
             {
-                Icon = this.Icon
+                Icon = this.Icon,
+                WindowState = this.fetchMaximixedToolStripMenuItem.Checked ? FormWindowState.Maximized : FormWindowState.Normal
             };
 
             this.fetchForm.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FetchFormFormClosing);
