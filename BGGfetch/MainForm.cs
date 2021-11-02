@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -110,7 +111,8 @@ namespace BGGfetch
 
         void SourceCodeGithubcomToolStripMenuItemClick(object sender, EventArgs e)
         {
-
+            // Open GitHub repository
+            Process.Start("https://github.com/publicdomain/bggfetch/");
         }
 
         void ExitToolStripMenuItemClick(object sender, EventArgs e)
