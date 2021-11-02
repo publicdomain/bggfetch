@@ -115,7 +115,8 @@ namespace BGGfetch
 
         void ExitToolStripMenuItemClick(object sender, EventArgs e)
         {
-
+            // Close program        
+            this.Close();
         }
     }
 }
