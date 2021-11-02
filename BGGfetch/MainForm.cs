@@ -106,7 +106,8 @@ namespace BGGfetch
 
         void FreeReleasesPublicDomainWeeklycomToolStripMenuItemClick(object sender, EventArgs e)
         {
-
+            // Open our public domain website
+            Process.Start("https://publicdomaingift.com");
         }
 
         void SourceCodeGithubcomToolStripMenuItemClick(object sender, EventArgs e)
