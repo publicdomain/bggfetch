@@ -86,7 +86,11 @@ namespace BGGfetch
 
         void NewToolStripMenuItemClick(object sender, EventArgs e)
         {
+            this.gameTextBox.Clear();
 
+            this.directoryTextBox.Clear();
+
+            this.gameTextBox.Focus();
         }
 
         void OpenToolStripMenuItemClick(object sender, EventArgs e)
