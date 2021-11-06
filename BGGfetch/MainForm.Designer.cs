@@ -61,7 +61,7 @@ namespace BGGfetch
 			this.browseButton = new System.Windows.Forms.Button();
 			this.directoryTextBox = new System.Windows.Forms.TextBox();
 			this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-			this.SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.mainMenuStrip.SuspendLayout();
 			this.mainStatusStrip.SuspendLayout();
@@ -360,9 +360,9 @@ namespace BGGfetch
 			// 
 			// SaveFileDialog
 			// 
-			this.SaveFileDialog.DefaultExt = "txt";
-			this.SaveFileDialog.Filter = "TXT files (*.txt)|*.txt|All files (*.*)|*.*";
-			this.SaveFileDialog.Title = "Save games file";
+			this.saveFileDialog.DefaultExt = "txt";
+			this.saveFileDialog.Filter = "TXT files (*.txt)|*.txt|All files (*.*)|*.*";
+			this.saveFileDialog.Title = "Save games file";
 			// 
 			// folderBrowserDialog
 			// 
@@ -391,7 +391,7 @@ namespace BGGfetch
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
-		private System.Windows.Forms.SaveFileDialog SaveFileDialog;
+		private System.Windows.Forms.SaveFileDialog saveFileDialog;
 		private System.Windows.Forms.OpenFileDialog OpenFileDialog;
 		private System.Windows.Forms.ToolStripMenuItem fetchMaximixedToolStripMenuItem;
 		private System.Windows.Forms.TextBox directoryTextBox;

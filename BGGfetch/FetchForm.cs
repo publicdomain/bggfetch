@@ -169,7 +169,7 @@ namespace BGGfetch
 
                     doc.LoadHtml(html);
 
-                    table = doc.DocumentNode.SelectSingleNode("//table");
+                    table = doc.DocumentNode.SelectSingleNode("//table[@id='collectionitems']");
                 }
                 catch
                 {
@@ -185,13 +185,13 @@ namespace BGGfetch
                 this.dataTable = new DataTable();
 
                 // Set headers
-                foreach (HtmlNode col in doc.DocumentNode.SelectNodes("//table[@id='collectionitems']//tr/th"))
+                foreach (HtmlNode col in doc.DocumentNode.SelectNodes("//table[@id='collectionitems']/tr/th"))
                 {
                     this.dataTable.Columns.Add(col.InnerText.Trim());
                 }
 
                 // Set content
-                foreach (HtmlNode row in doc.DocumentNode.SelectNodes("//table[@id='collectionitems']//tr"))
+                foreach (HtmlNode row in doc.DocumentNode.SelectNodes("//table[@id='collectionitems']/tr"))
                 {
                     DataRow dataRow = this.dataTable.NewRow();
 

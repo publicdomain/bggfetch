@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace BGGfetch
@@ -100,12 +101,17 @@ namespace BGGfetch
 
         void SaveToolStripMenuItemClick(object sender, EventArgs e)
         {
+            this.saveFileDialog.FileName = string.Empty;
 
+            if (this.saveFileDialog.ShowDialog() == DialogResult.OK && this.saveFileDialog.FileName.Length > 0)
+            {
+                File.WriteAllLines(this.saveFileDialog.FileName, this.gameTextBox.Lines.Cast<string>().ToList()); // TODO Reused. Can be .Text
+            }
         }
 
         void AboutToolStripMenuItemClick(object sender, EventArgs e)
         {
-
+            MessageBox.Show("AboutToolStripMenuItemClick placeholder :)");
         }
 
         void FreeReleasesPublicDomainWeeklycomToolStripMenuItemClick(object sender, EventArgs e)
