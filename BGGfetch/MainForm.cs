@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 
@@ -21,12 +22,26 @@ namespace BGGfetch
         FetchForm fetchForm = null;
 
         /// <summary>
+        /// Gets or sets the associated icon.
+        /// </summary>
+        /// <value>The associated icon.</value>
+        private Icon associatedIcon = null;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="T:BGGfetch.MainForm"/> class.
         /// </summary>
         public MainForm()
         {
             // The InitializeComponent() call is required for Windows Forms designer support.
             InitializeComponent();
+
+            /* Set icons */
+
+            // Set associated icon from exe file
+            this.associatedIcon = Icon.ExtractAssociatedIcon(typeof(MainForm).GetTypeInfo().Assembly.Location);
+
+            // Set PublicDomain.is tool strip menu item image
+            this.freeReleasesPublicDomainIsToolStripMenuItem.Image = this.associatedIcon.ToBitmap();
         }
 
         void GameTextBoxTextChanged(object sender, EventArgs e)
@@ -142,12 +157,13 @@ namespace BGGfetch
 
         void FreeReleasesPublicDomainIsToolStripMenuItemClick(object sender, EventArgs e)
         {
-
+            // Open our website
+            Process.Start("https://publicdomain.is");
         }
 
         void OriginalThreadDonationCodercomToolStripMenuItemClick(object sender, EventArgs e)
         {
-
+            // TODO Add thread
         }
 
         void SourceCodeGithubcomToolStripMenuItemClick(object sender, EventArgs e)
