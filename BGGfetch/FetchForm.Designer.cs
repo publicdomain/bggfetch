@@ -31,39 +31,31 @@ namespace BGGfetch
         /// </summary>
         private void InitializeComponent()
         {
-        	this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-        	this.downloadListBox = new System.Windows.Forms.ListBox();
-        	this.gameDataGridView = new System.Windows.Forms.DataGridView();
         	this.browserStatusStrip = new System.Windows.Forms.StatusStrip();
         	this.browserToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-        	this.tableLayoutPanel.SuspendLayout();
-        	((System.ComponentModel.ISupportInitialize)(this.gameDataGridView)).BeginInit();
+        	this.gameDataGridView = new System.Windows.Forms.DataGridView();
+        	this.downloadListBox = new System.Windows.Forms.ListBox();
+        	this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
         	this.browserStatusStrip.SuspendLayout();
+        	((System.ComponentModel.ISupportInitialize)(this.gameDataGridView)).BeginInit();
+        	this.tableLayoutPanel.SuspendLayout();
         	this.SuspendLayout();
         	// 
-        	// tableLayoutPanel
+        	// browserStatusStrip
         	// 
-        	this.tableLayoutPanel.ColumnCount = 1;
-        	this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-        	this.tableLayoutPanel.Controls.Add(this.downloadListBox, 0, 1);
-        	this.tableLayoutPanel.Controls.Add(this.gameDataGridView, 0, 0);
-        	this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
-        	this.tableLayoutPanel.Name = "tableLayoutPanel";
-        	this.tableLayoutPanel.RowCount = 2;
-        	this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
-        	this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
-        	this.tableLayoutPanel.Size = new System.Drawing.Size(711, 420);
-        	this.tableLayoutPanel.TabIndex = 4;
+        	this.browserStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+        	        	        	this.browserToolStripStatusLabel});
+        	this.browserStatusStrip.Location = new System.Drawing.Point(0, 420);
+        	this.browserStatusStrip.Name = "browserStatusStrip";
+        	this.browserStatusStrip.Size = new System.Drawing.Size(711, 22);
+        	this.browserStatusStrip.TabIndex = 3;
+        	this.browserStatusStrip.Text = "statusStrip1";
         	// 
-        	// downloadListBox
+        	// browserToolStripStatusLabel
         	// 
-        	this.downloadListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.downloadListBox.FormattingEnabled = true;
-        	this.downloadListBox.Location = new System.Drawing.Point(3, 297);
-        	this.downloadListBox.Name = "downloadListBox";
-        	this.downloadListBox.Size = new System.Drawing.Size(705, 120);
-        	this.downloadListBox.TabIndex = 1;
+        	this.browserToolStripStatusLabel.Name = "browserToolStripStatusLabel";
+        	this.browserToolStripStatusLabel.Size = new System.Drawing.Size(149, 17);
+        	this.browserToolStripStatusLabel.Text = "Waiting for added games...";
         	// 
         	// gameDataGridView
         	// 
@@ -82,21 +74,29 @@ namespace BGGfetch
         	this.gameDataGridView.TabIndex = 0;
         	this.gameDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.GameDataGridViewCellContentClickAsync);
         	// 
-        	// browserStatusStrip
+        	// downloadListBox
         	// 
-        	this.browserStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-        	        	        	this.browserToolStripStatusLabel});
-        	this.browserStatusStrip.Location = new System.Drawing.Point(0, 420);
-        	this.browserStatusStrip.Name = "browserStatusStrip";
-        	this.browserStatusStrip.Size = new System.Drawing.Size(711, 22);
-        	this.browserStatusStrip.TabIndex = 3;
-        	this.browserStatusStrip.Text = "statusStrip1";
+        	this.downloadListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.downloadListBox.FormattingEnabled = true;
+        	this.downloadListBox.Location = new System.Drawing.Point(3, 297);
+        	this.downloadListBox.Name = "downloadListBox";
+        	this.downloadListBox.Size = new System.Drawing.Size(705, 120);
+        	this.downloadListBox.TabIndex = 1;
         	// 
-        	// browserToolStripStatusLabel
+        	// tableLayoutPanel
         	// 
-        	this.browserToolStripStatusLabel.Name = "browserToolStripStatusLabel";
-        	this.browserToolStripStatusLabel.Size = new System.Drawing.Size(149, 17);
-        	this.browserToolStripStatusLabel.Text = "Waiting for added games...";
+        	this.tableLayoutPanel.ColumnCount = 1;
+        	this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+        	this.tableLayoutPanel.Controls.Add(this.downloadListBox, 0, 1);
+        	this.tableLayoutPanel.Controls.Add(this.gameDataGridView, 0, 0);
+        	this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
+        	this.tableLayoutPanel.Name = "tableLayoutPanel";
+        	this.tableLayoutPanel.RowCount = 2;
+        	this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
+        	this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+        	this.tableLayoutPanel.Size = new System.Drawing.Size(711, 420);
+        	this.tableLayoutPanel.TabIndex = 4;
         	// 
         	// FetchForm
         	// 
@@ -110,17 +110,17 @@ namespace BGGfetch
         	this.Text = "Loading...";
         	this.Load += new System.EventHandler(this.FetchFormLoad);
         	this.Shown += new System.EventHandler(this.FetchFormShown);
-        	this.tableLayoutPanel.ResumeLayout(false);
-        	((System.ComponentModel.ISupportInitialize)(this.gameDataGridView)).EndInit();
         	this.browserStatusStrip.ResumeLayout(false);
         	this.browserStatusStrip.PerformLayout();
+        	((System.ComponentModel.ISupportInitialize)(this.gameDataGridView)).EndInit();
+        	this.tableLayoutPanel.ResumeLayout(false);
         	this.ResumeLayout(false);
         	this.PerformLayout();
         }
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
+        private System.Windows.Forms.ListBox downloadListBox;
+        private System.Windows.Forms.DataGridView gameDataGridView;
         private System.Windows.Forms.ToolStripStatusLabel browserToolStripStatusLabel;
         private System.Windows.Forms.StatusStrip browserStatusStrip;
-        private System.Windows.Forms.ListBox downloadListBox;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
-        private System.Windows.Forms.DataGridView gameDataGridView;
     }
 }

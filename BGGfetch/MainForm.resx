@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <metadata name="mainMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+    <value>270, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="newToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -164,6 +164,23 @@
         QmCC
 </value>
   </data>
+  <data name="originalThreadDonationCodercomToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADnYAAA52ARTacF8AAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfjCRABAR160sHN
+        AAAAHWlUWHRDb21tZW50AAAAAABDcmVhdGVkIHdpdGggR0lNUGQuZQcAAAJLSURBVDhPjZNfaFJxFMe3
+        arSaD732NogoCKlWZAquBSOoUQ+NkPYSZIzYYL0Eox4K2kPDXoJQELKgYip49d5ufxBs/knIQJhdNLV5
+        hZildDWvm3nV++f0u5Lk3VruvPzO/d1zPud7D9/b0/M3emOxGEbTNI/OdziO7+941z3FCeIax9VBkiTI
+        5/OQzWYph8OxvXsnqlianhooL7u+1KlxqK+ugU6nA7PZXI3H4zu3BMg91jyinw1IwesqqH7LAkm+klWI
+        qVSq/18ADMNUivuPRvXxpfnRFWrhNjSafOszqtWqkE6nFQCj0dgXDodpt9t9aAM4Eo35BAlazX8A5c4i
+        j8czghQxXq93GuUP1gO2oWnVdrN81mo1oCiKiEQiM4lEgkCKIJlMstFoVB8MBl8rAARBDDIM0+gEtHNR
+        FFuKOI4DlmWB53nJ7/dfVQBCodCxSqUiAgq5WA65of3cviuVSoB80jAYDLsUACRpCAGEToA8rVgsAltm
+        4GeJga/0Z8Bddslms21coMVi2ZPJZBry1GazCYIgtJQ0eBHypAaW8SvwnZyFyovT2Ka+QJs9hxYkOxBy
+        uRwwTBEK+SxwixcBFi+DFJwBwaf9UL4z0bspxGq1HnQ6nQkSx3ifz1dy2Z/zKfvkWzFpAYmeAunTSEB8
+        v7e7vQOz2jf6cZMqcPNo+OWlk7t/LUycr9kv3GqSg0oHrpfyZPRsH/tQ/3T1vtrCmIaPrJkO856h/h1b
+        +h/kopW5U/uYuwcmC/PDY4W5E2PUDe2ZH/fUmv8BfgOOL7niru+DKAAAAABJRU5ErkJggg==
+</value>
+  </data>
   <data name="sourceCodeGithubcomToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -177,16 +194,16 @@
 </value>
   </data>
   <metadata name="mainStatusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>397, 17</value>
+  </metadata>
+  <metadata name="openFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="saveFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>144, 17</value>
   </metadata>
-  <metadata name="OpenFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>275, 17</value>
-  </metadata>
-  <metadata name="SaveFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>457, 17</value>
-  </metadata>
   <metadata name="folderBrowserDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>637, 17</value>
+    <value>528, 17</value>
   </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

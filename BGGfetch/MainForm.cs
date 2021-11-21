@@ -184,5 +184,35 @@ namespace BGGfetch
             // Close program        
             this.Close();
         }
+        
+        void DirectoryTextBoxDragDrop(object sender, DragEventArgs e)
+        {
+        	
+        }
+        
+        void DirectoryTextBoxDragEnter(object sender, DragEventArgs e)
+        {
+        	
+        }
+        
+        void GameDataGridViewClick(object sender, EventArgs e)
+        {
+        	
+        }
+        
+        void FreeReleasesPublicDomainIsToolStripMenuItemClick(object sender, EventArgs e)
+        {
+        	
+        }
+        
+        void OriginalThreadDonationCodercomToolStripMenuItemClick(object sender, EventArgs e)
+        {
+        	
+        }
+        
+        void NextGameButtonClick(object sender, EventArgs e)
+        {
+        	
+        }
     }
 }

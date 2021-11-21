@@ -150,7 +150,7 @@ namespace BGGfetch
 
             retrylabel:
 
-                this.Text = $"Fetching search results for \"{this.gameList[0]}\"...{ (retries > 0 ? $" Retries: {retries}" : string.Empty)}";
+                //#this.Text = $"Fetching search results for \"{this.gameList[0]}\"...{ (retries > 0 ? $" Retries: {retries}" : string.Empty)}";
 
                 WebClient webClient = new WebClient
                 {
