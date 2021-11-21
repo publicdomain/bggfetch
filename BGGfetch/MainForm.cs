@@ -140,10 +140,14 @@ namespace BGGfetch
             MessageBox.Show("AboutToolStripMenuItemClick placeholder :)");
         }
 
-        void FreeReleasesPublicDomainWeeklycomToolStripMenuItemClick(object sender, EventArgs e)
+        void FreeReleasesPublicDomainIsToolStripMenuItemClick(object sender, EventArgs e)
         {
-            // Open our public domain website
-            Process.Start("https://publicdomaingift.com");
+
+        }
+
+        void OriginalThreadDonationCodercomToolStripMenuItemClick(object sender, EventArgs e)
+        {
+
         }
 
         void SourceCodeGithubcomToolStripMenuItemClick(object sender, EventArgs e)
@@ -190,20 +194,10 @@ namespace BGGfetch
 
         void DirectoryTextBoxDragEnter(object sender, DragEventArgs e)
         {
-
+            e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
         }
 
         void GameDataGridViewClick(object sender, EventArgs e)
-        {
-
-        }
-
-        void FreeReleasesPublicDomainIsToolStripMenuItemClick(object sender, EventArgs e)
-        {
-
-        }
-
-        void OriginalThreadDonationCodercomToolStripMenuItemClick(object sender, EventArgs e)
         {
 
         }
