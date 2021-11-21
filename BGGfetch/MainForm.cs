@@ -73,17 +73,7 @@ namespace BGGfetch
                 return;
             }
 
-            this.startButton.Enabled = false;
-
-            this.fetchForm = new FetchForm(new List<string>(this.gameTextBox.Lines), this.directoryTextBox.Text)
-            {
-                Icon = this.Icon,
-                WindowState = this.fetchMaximixedToolStripMenuItem.Checked ? FormWindowState.Maximized : FormWindowState.Normal
-            };
-
-            this.fetchForm.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FetchFormFormClosing);
-
-            this.fetchForm.ShowDialog();
+            // TODO Change to results tab
         }
 
         void NewToolStripMenuItemClick(object sender, EventArgs e)
@@ -184,35 +174,43 @@ namespace BGGfetch
             // Close program        
             this.Close();
         }
-        
+
         void DirectoryTextBoxDragDrop(object sender, DragEventArgs e)
         {
-        	
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var possibleDirectory = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                if (Directory.Exists(possibleDirectory[0]))
+                {
+                    this.directoryTextBox.Text = possibleDirectory[0];
+                }
+            }
         }
-        
+
         void DirectoryTextBoxDragEnter(object sender, DragEventArgs e)
         {
-        	
+
         }
-        
+
         void GameDataGridViewClick(object sender, EventArgs e)
         {
-        	
+
         }
-        
+
         void FreeReleasesPublicDomainIsToolStripMenuItemClick(object sender, EventArgs e)
         {
-        	
+
         }
-        
+
         void OriginalThreadDonationCodercomToolStripMenuItemClick(object sender, EventArgs e)
         {
-        	
+
         }
-        
+
         void NextGameButtonClick(object sender, EventArgs e)
         {
-        	
+
         }
     }
 }
