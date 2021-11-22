@@ -163,7 +163,8 @@ namespace BGGfetch
 
         void OriginalThreadDonationCodercomToolStripMenuItemClick(object sender, EventArgs e)
         {
-            // TODO Add thread
+            // Open original thread
+            Process.Start("https://www.donationcoder.com/forum/index.php?topic=51939.0");
         }
 
         void SourceCodeGithubcomToolStripMenuItemClick(object sender, EventArgs e)

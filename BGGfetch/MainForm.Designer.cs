@@ -75,6 +75,8 @@ namespace BGGfetch
         	this.downloadListBox = new System.Windows.Forms.ListBox();
         	this.gameDataGridView = new System.Windows.Forms.DataGridView();
         	this.nextGameButton = new System.Windows.Forms.Button();
+        	this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+        	this.gameInfoTextBox = new System.Windows.Forms.TextBox();
         	this.gamePictureBox = new System.Windows.Forms.PictureBox();
         	this.mainMenuStrip.SuspendLayout();
         	this.mainStatusStrip.SuspendLayout();
@@ -89,6 +91,10 @@ namespace BGGfetch
         	this.splitContainer1.SuspendLayout();
         	this.tableLayoutPanel.SuspendLayout();
         	((System.ComponentModel.ISupportInitialize)(this.gameDataGridView)).BeginInit();
+        	((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+        	this.splitContainer2.Panel1.SuspendLayout();
+        	this.splitContainer2.Panel2.SuspendLayout();
+        	this.splitContainer2.SuspendLayout();
         	((System.ComponentModel.ISupportInitialize)(this.gamePictureBox)).BeginInit();
         	this.SuspendLayout();
         	// 
@@ -454,7 +460,7 @@ namespace BGGfetch
         	// 
         	// splitContainer1.Panel2
         	// 
-        	this.splitContainer1.Panel2.Controls.Add(this.gamePictureBox);
+        	this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
         	this.splitContainer1.Size = new System.Drawing.Size(570, 384);
         	this.splitContainer1.SplitterDistance = 349;
         	this.splitContainer1.TabIndex = 6;
@@ -483,7 +489,7 @@ namespace BGGfetch
         	this.downloadListBox.Location = new System.Drawing.Point(3, 282);
         	this.downloadListBox.Name = "downloadListBox";
         	this.downloadListBox.Size = new System.Drawing.Size(343, 99);
-        	this.downloadListBox.TabIndex = 2;
+        	this.downloadListBox.TabIndex = 3;
         	// 
         	// gameDataGridView
         	// 
@@ -515,12 +521,41 @@ namespace BGGfetch
         	this.nextGameButton.UseVisualStyleBackColor = true;
         	this.nextGameButton.Click += new System.EventHandler(this.NextGameButtonClick);
         	// 
+        	// splitContainer2
+        	// 
+        	this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+        	this.splitContainer2.Name = "splitContainer2";
+        	this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+        	// 
+        	// splitContainer2.Panel1
+        	// 
+        	this.splitContainer2.Panel1.Controls.Add(this.gameInfoTextBox);
+        	this.splitContainer2.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+        	// 
+        	// splitContainer2.Panel2
+        	// 
+        	this.splitContainer2.Panel2.Controls.Add(this.gamePictureBox);
+        	this.splitContainer2.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+        	this.splitContainer2.Size = new System.Drawing.Size(217, 384);
+        	this.splitContainer2.SplitterDistance = 177;
+        	this.splitContainer2.TabIndex = 1;
+        	// 
+        	// gameInfoTextBox
+        	// 
+        	this.gameInfoTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.gameInfoTextBox.Location = new System.Drawing.Point(0, 0);
+        	this.gameInfoTextBox.Multiline = true;
+        	this.gameInfoTextBox.Name = "gameInfoTextBox";
+        	this.gameInfoTextBox.Size = new System.Drawing.Size(217, 177);
+        	this.gameInfoTextBox.TabIndex = 2;
+        	// 
         	// gamePictureBox
         	// 
         	this.gamePictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
         	this.gamePictureBox.Location = new System.Drawing.Point(0, 0);
         	this.gamePictureBox.Name = "gamePictureBox";
-        	this.gamePictureBox.Size = new System.Drawing.Size(217, 384);
+        	this.gamePictureBox.Size = new System.Drawing.Size(217, 203);
         	this.gamePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
         	this.gamePictureBox.TabIndex = 0;
         	this.gamePictureBox.TabStop = false;
@@ -554,10 +589,17 @@ namespace BGGfetch
         	this.splitContainer1.ResumeLayout(false);
         	this.tableLayoutPanel.ResumeLayout(false);
         	((System.ComponentModel.ISupportInitialize)(this.gameDataGridView)).EndInit();
+        	this.splitContainer2.Panel1.ResumeLayout(false);
+        	this.splitContainer2.Panel1.PerformLayout();
+        	this.splitContainer2.Panel2.ResumeLayout(false);
+        	((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+        	this.splitContainer2.ResumeLayout(false);
         	((System.ComponentModel.ISupportInitialize)(this.gamePictureBox)).EndInit();
         	this.ResumeLayout(false);
         	this.PerformLayout();
         }
+        private System.Windows.Forms.TextBox gameInfoTextBox;
+        private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Button nextGameButton;
         private System.Windows.Forms.ToolStripMenuItem originalThreadDonationCodercomToolStripMenuItem;
         private System.Windows.Forms.PictureBox gamePictureBox;
