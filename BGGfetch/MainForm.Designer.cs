@@ -70,14 +70,14 @@ namespace BGGfetch
         	this.tabControl = new System.Windows.Forms.TabControl();
         	this.tabPage1 = new System.Windows.Forms.TabPage();
         	this.tabPage2 = new System.Windows.Forms.TabPage();
-        	this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+        	this.splitContainer = new System.Windows.Forms.SplitContainer();
         	this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
         	this.downloadListBox = new System.Windows.Forms.ListBox();
         	this.gameDataGridView = new System.Windows.Forms.DataGridView();
         	this.nextGameButton = new System.Windows.Forms.Button();
         	this.splitContainer2 = new System.Windows.Forms.SplitContainer();
         	this.gameInfoTextBox = new System.Windows.Forms.TextBox();
-        	this.gamePictureBox = new System.Windows.Forms.PictureBox();
+        	this.gameImagePictureBox = new System.Windows.Forms.PictureBox();
         	this.mainMenuStrip.SuspendLayout();
         	this.mainStatusStrip.SuspendLayout();
         	this.tableLayoutPanel1.SuspendLayout();
@@ -85,17 +85,17 @@ namespace BGGfetch
         	this.tabControl.SuspendLayout();
         	this.tabPage1.SuspendLayout();
         	this.tabPage2.SuspendLayout();
-        	((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-        	this.splitContainer1.Panel1.SuspendLayout();
-        	this.splitContainer1.Panel2.SuspendLayout();
-        	this.splitContainer1.SuspendLayout();
+        	((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
+        	this.splitContainer.Panel1.SuspendLayout();
+        	this.splitContainer.Panel2.SuspendLayout();
+        	this.splitContainer.SuspendLayout();
         	this.tableLayoutPanel.SuspendLayout();
         	((System.ComponentModel.ISupportInitialize)(this.gameDataGridView)).BeginInit();
         	((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
         	this.splitContainer2.Panel1.SuspendLayout();
         	this.splitContainer2.Panel2.SuspendLayout();
         	this.splitContainer2.SuspendLayout();
-        	((System.ComponentModel.ISupportInitialize)(this.gamePictureBox)).BeginInit();
+        	((System.ComponentModel.ISupportInitialize)(this.gameImagePictureBox)).BeginInit();
         	this.SuspendLayout();
         	// 
         	// mainMenuStrip
@@ -343,7 +343,7 @@ namespace BGGfetch
         	this.startButton.Location = new System.Drawing.Point(3, 342);
         	this.startButton.Name = "startButton";
         	this.startButton.Size = new System.Drawing.Size(564, 39);
-        	this.startButton.TabIndex = 2;
+        	this.startButton.TabIndex = 3;
         	this.startButton.Text = "&START FETCHING";
         	this.startButton.UseVisualStyleBackColor = true;
         	this.startButton.Click += new System.EventHandler(this.StartButtonClick);
@@ -356,7 +356,7 @@ namespace BGGfetch
         	this.gameTextBox.Multiline = true;
         	this.gameTextBox.Name = "gameTextBox";
         	this.gameTextBox.Size = new System.Drawing.Size(564, 254);
-        	this.gameTextBox.TabIndex = 3;
+        	this.gameTextBox.TabIndex = 0;
         	this.gameTextBox.TextChanged += new System.EventHandler(this.GameTextBoxTextChanged);
         	// 
         	// tableLayoutPanel2
@@ -382,7 +382,7 @@ namespace BGGfetch
         	this.browseButton.Margin = new System.Windows.Forms.Padding(1);
         	this.browseButton.Name = "browseButton";
         	this.browseButton.Size = new System.Drawing.Size(169, 23);
-        	this.browseButton.TabIndex = 0;
+        	this.browseButton.TabIndex = 2;
         	this.browseButton.Text = "&Browse";
         	this.browseButton.UseVisualStyleBackColor = true;
         	this.browseButton.Click += new System.EventHandler(this.BrowseButtonClick);
@@ -439,7 +439,7 @@ namespace BGGfetch
         	// 
         	// tabPage2
         	// 
-        	this.tabPage2.Controls.Add(this.splitContainer1);
+        	this.tabPage2.Controls.Add(this.splitContainer);
         	this.tabPage2.Location = new System.Drawing.Point(4, 22);
         	this.tabPage2.Name = "tabPage2";
         	this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -448,22 +448,22 @@ namespace BGGfetch
         	this.tabPage2.Text = "Results";
         	this.tabPage2.UseVisualStyleBackColor = true;
         	// 
-        	// splitContainer1
+        	// splitContainer
         	// 
-        	this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.splitContainer1.Location = new System.Drawing.Point(3, 3);
-        	this.splitContainer1.Name = "splitContainer1";
+        	this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.splitContainer.Location = new System.Drawing.Point(3, 3);
+        	this.splitContainer.Name = "splitContainer";
         	// 
-        	// splitContainer1.Panel1
+        	// splitContainer.Panel1
         	// 
-        	this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel);
+        	this.splitContainer.Panel1.Controls.Add(this.tableLayoutPanel);
         	// 
-        	// splitContainer1.Panel2
+        	// splitContainer.Panel2
         	// 
-        	this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-        	this.splitContainer1.Size = new System.Drawing.Size(570, 384);
-        	this.splitContainer1.SplitterDistance = 349;
-        	this.splitContainer1.TabIndex = 6;
+        	this.splitContainer.Panel2.Controls.Add(this.splitContainer2);
+        	this.splitContainer.Size = new System.Drawing.Size(570, 384);
+        	this.splitContainer.SplitterDistance = 300;
+        	this.splitContainer.TabIndex = 6;
         	// 
         	// tableLayoutPanel
         	// 
@@ -479,7 +479,7 @@ namespace BGGfetch
         	this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
         	this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
         	this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
-        	this.tableLayoutPanel.Size = new System.Drawing.Size(349, 384);
+        	this.tableLayoutPanel.Size = new System.Drawing.Size(300, 384);
         	this.tableLayoutPanel.TabIndex = 5;
         	// 
         	// downloadListBox
@@ -488,7 +488,7 @@ namespace BGGfetch
         	this.downloadListBox.FormattingEnabled = true;
         	this.downloadListBox.Location = new System.Drawing.Point(3, 282);
         	this.downloadListBox.Name = "downloadListBox";
-        	this.downloadListBox.Size = new System.Drawing.Size(343, 99);
+        	this.downloadListBox.Size = new System.Drawing.Size(294, 99);
         	this.downloadListBox.TabIndex = 3;
         	// 
         	// gameDataGridView
@@ -505,7 +505,7 @@ namespace BGGfetch
         	this.gameDataGridView.ReadOnly = true;
         	this.gameDataGridView.RowHeadersVisible = false;
         	this.gameDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-        	this.gameDataGridView.Size = new System.Drawing.Size(343, 238);
+        	this.gameDataGridView.Size = new System.Drawing.Size(294, 238);
         	this.gameDataGridView.TabIndex = 0;
         	this.gameDataGridView.Click += new System.EventHandler(this.GameDataGridViewClick);
         	// 
@@ -515,7 +515,7 @@ namespace BGGfetch
         	this.nextGameButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
         	this.nextGameButton.Location = new System.Drawing.Point(3, 247);
         	this.nextGameButton.Name = "nextGameButton";
-        	this.nextGameButton.Size = new System.Drawing.Size(343, 29);
+        	this.nextGameButton.Size = new System.Drawing.Size(294, 29);
         	this.nextGameButton.TabIndex = 1;
         	this.nextGameButton.Text = "&Next game";
         	this.nextGameButton.UseVisualStyleBackColor = true;
@@ -535,9 +535,9 @@ namespace BGGfetch
         	// 
         	// splitContainer2.Panel2
         	// 
-        	this.splitContainer2.Panel2.Controls.Add(this.gamePictureBox);
+        	this.splitContainer2.Panel2.Controls.Add(this.gameImagePictureBox);
         	this.splitContainer2.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-        	this.splitContainer2.Size = new System.Drawing.Size(217, 384);
+        	this.splitContainer2.Size = new System.Drawing.Size(266, 384);
         	this.splitContainer2.SplitterDistance = 177;
         	this.splitContainer2.TabIndex = 1;
         	// 
@@ -547,18 +547,18 @@ namespace BGGfetch
         	this.gameInfoTextBox.Location = new System.Drawing.Point(0, 0);
         	this.gameInfoTextBox.Multiline = true;
         	this.gameInfoTextBox.Name = "gameInfoTextBox";
-        	this.gameInfoTextBox.Size = new System.Drawing.Size(217, 177);
+        	this.gameInfoTextBox.Size = new System.Drawing.Size(266, 177);
         	this.gameInfoTextBox.TabIndex = 2;
         	// 
-        	// gamePictureBox
+        	// gameImagePictureBox
         	// 
-        	this.gamePictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.gamePictureBox.Location = new System.Drawing.Point(0, 0);
-        	this.gamePictureBox.Name = "gamePictureBox";
-        	this.gamePictureBox.Size = new System.Drawing.Size(217, 203);
-        	this.gamePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-        	this.gamePictureBox.TabIndex = 0;
-        	this.gamePictureBox.TabStop = false;
+        	this.gameImagePictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.gameImagePictureBox.Location = new System.Drawing.Point(0, 0);
+        	this.gameImagePictureBox.Name = "gameImagePictureBox";
+        	this.gameImagePictureBox.Size = new System.Drawing.Size(266, 203);
+        	this.gameImagePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+        	this.gameImagePictureBox.TabIndex = 0;
+        	this.gameImagePictureBox.TabStop = false;
         	// 
         	// MainForm
         	// 
@@ -583,10 +583,10 @@ namespace BGGfetch
         	this.tabControl.ResumeLayout(false);
         	this.tabPage1.ResumeLayout(false);
         	this.tabPage2.ResumeLayout(false);
-        	this.splitContainer1.Panel1.ResumeLayout(false);
-        	this.splitContainer1.Panel2.ResumeLayout(false);
-        	((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-        	this.splitContainer1.ResumeLayout(false);
+        	this.splitContainer.Panel1.ResumeLayout(false);
+        	this.splitContainer.Panel2.ResumeLayout(false);
+        	((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
+        	this.splitContainer.ResumeLayout(false);
         	this.tableLayoutPanel.ResumeLayout(false);
         	((System.ComponentModel.ISupportInitialize)(this.gameDataGridView)).EndInit();
         	this.splitContainer2.Panel1.ResumeLayout(false);
@@ -594,7 +594,7 @@ namespace BGGfetch
         	this.splitContainer2.Panel2.ResumeLayout(false);
         	((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
         	this.splitContainer2.ResumeLayout(false);
-        	((System.ComponentModel.ISupportInitialize)(this.gamePictureBox)).EndInit();
+        	((System.ComponentModel.ISupportInitialize)(this.gameImagePictureBox)).EndInit();
         	this.ResumeLayout(false);
         	this.PerformLayout();
         }
@@ -602,8 +602,8 @@ namespace BGGfetch
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Button nextGameButton;
         private System.Windows.Forms.ToolStripMenuItem originalThreadDonationCodercomToolStripMenuItem;
-        private System.Windows.Forms.PictureBox gamePictureBox;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.PictureBox gameImagePictureBox;
+        private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.DataGridView gameDataGridView;
         private System.Windows.Forms.ListBox downloadListBox;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;

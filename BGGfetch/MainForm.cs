@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -17,9 +18,34 @@ namespace BGGfetch
     public partial class MainForm : Form
     {
         /// <summary>
-        /// The fetch form.
+        /// The data table.
         /// </summary>
-        FetchForm fetchForm = null;
+        DataTable dataTable = null;
+
+        /// <summary>
+        /// The last download date time.
+        /// </summary>
+        DateTime lastXmlApiDownloadDateTime = DateTime.Now;
+
+        /// <summary>
+        /// The image timer.
+        /// </summary>
+        System.Timers.Timer imageTimer = new System.Timers.Timer(1000);
+
+        /// <summary>
+        /// The game list.
+        /// </summary>
+        List<string> gameList;
+
+        /// <summary>
+        /// The directory.
+        /// </summary>
+        string directory;
+
+        /// <summary>
+        /// The file path.
+        /// </summary>
+        string filePath;
 
         /// <summary>
         /// Gets or sets the associated icon.
@@ -42,6 +68,14 @@ namespace BGGfetch
 
             // Set PublicDomain.is tool strip menu item image
             this.freeReleasesPublicDomainIsToolStripMenuItem.Image = this.associatedIcon.ToBitmap();
+
+            // SSL fix
+            System.Net.ServicePointManager.Expect100Continue = true;
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+
+            imageTimer.AutoReset = false;
+
+            imageTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsedAsync);
         }
 
         void GameTextBoxTextChanged(object sender, EventArgs e)
