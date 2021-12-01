@@ -123,7 +123,19 @@ namespace BGGfetch
                 return;
             }
 
-            // TODO Change to results tab
+            // Change to results tab
+            this.tabControl.SelectTab("resultTabPage");
+
+            // Set variables
+            this.gameList = new List<string>(this.gameTextBox.Lines);
+            this.gameListIndex = 0;
+            this.directory = this.directoryTextBox.Text;
+
+            // Begin game search by triggering next game
+            this.nextGameButton.PerformClick();
+
+            // TODO Disable start button until finishing [Can be changed to "STOP FETCHING"]
+            this.startButton.Enabled = false;
         }
 
         void NewToolStripMenuItemClick(object sender, EventArgs e)
@@ -297,7 +309,9 @@ namespace BGGfetch
                 return;
             }
 
-            /* Search */
+            /* Search game */
+
+            // "https://www.boardgamegeek.com/xmlapi/search?search=sherlock%20holmes";
 
             /* Download image */
 
