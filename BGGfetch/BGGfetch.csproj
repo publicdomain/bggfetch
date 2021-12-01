@@ -49,6 +49,9 @@
     <Reference Include="HtmlAgilityPack">
       <HintPath>Resources\HtmlAgilityPack.dll</HintPath>
     </Reference>
+    <Reference Include="ReadSharp">
+      <HintPath>Resources\ReadSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutForm.cs" />
@@ -70,6 +73,9 @@
     <None Include="app.config" />
     <None Include="Resources\frisbee_gb6cd93dc6_640_k01_icon.ico" />
     <None Include="Resources\publicdomain.com_7-8-vista-xp.ico" />
+    <None Include="Resources\ReadSharp.dll" />
+    <None Include="Resources\ReadSharp-LICENSE-MIT.txt" />
+    <None Include="Resources\HtmlAgilityPack.dll" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutForm.resx">

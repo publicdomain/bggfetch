@@ -31,9 +31,9 @@ namespace BGGfetch
         DateTime lastXmlApiDownloadDateTime = DateTime.Now;
 
         /// <summary>
-        /// The image timer.
+        /// The fetch timer.
         /// </summary>
-        System.Timers.Timer imageTimer = new System.Timers.Timer(1000);
+        System.Timers.Timer fetchTimer = new System.Timers.Timer(1000);
 
         /// <summary>
         /// The game list.
@@ -81,9 +81,9 @@ namespace BGGfetch
             System.Net.ServicePointManager.Expect100Continue = true;
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
 
-            imageTimer.AutoReset = false;
+            fetchTimer.AutoReset = false;
 
-            imageTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsedAsync);
+            fetchTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsedAsync);
         }
 
         void GameTextBoxTextChanged(object sender, EventArgs e)
@@ -136,6 +136,9 @@ namespace BGGfetch
 
             // TODO Disable start button until finishing [Can be changed to "STOP FETCHING"]
             this.startButton.Enabled = false;
+
+            // Start the timer
+            this.fetchTimer.Start();
         }
 
         void NewToolStripMenuItemClick(object sender, EventArgs e)
@@ -262,7 +265,11 @@ namespace BGGfetch
 
         void NextGameButtonClick(object sender, EventArgs e)
         {
+            // Add to download list box
+            this.downloadListBox.Items.Add($"search | {this.gameList[this.gameListIndex]}");
 
+            // Raise index
+            this.gameListIndex++;
         }
 
         /// <summary>
@@ -296,7 +303,7 @@ namespace BGGfetch
             // Basic checks
             if (this.downloadListBox.Items.Count == 0)
             {
-                this.imageTimer.Stop();
+                this.fetchTimer.Stop();
 
                 return;
             }
@@ -309,70 +316,153 @@ namespace BGGfetch
                 return;
             }
 
-            /* Search game */
+            /* Search or fetch game info */
 
-            // "https://www.boardgamegeek.com/xmlapi/search?search=sherlock%20holmes";
+            var xml = string.Empty;
 
-            /* Download image */
+            var item = this.downloadListBox.Items[0].ToString().Split(new string[] { " | " }, StringSplitOptions.None);
 
-            try
+            var action = item[0];
+
+            // Discern by action
+            if (action == "search")
             {
-                var xml = string.Empty;
+                /* Search game */
 
-                var item = this.downloadListBox.Items[0].ToString().Split(new string[] { " | " }, StringSplitOptions.None);
-
-                var id = item[0];
-                var title = item[1];
-
-                this.resultToolStripStatusLabel.Text = $"Downloading game info: \"{title}\"...";
-
-                WebClient webClient = new WebClient
+                try
                 {
-                    Proxy = null
-                };
+                    var title = item[1];
 
-                // Download xml for game id
-                xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
+                    this.resultToolStripStatusLabel.Text = $"Searching for: \"{title}\"...";
 
-                // Set new datetime
-                this.lastXmlApiDownloadDateTime = DateTime.Now;
+                    WebClient webClient = new WebClient
+                    {
+                        Proxy = null
+                    };
 
-                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                    // Download xml for game id
+                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}"));
 
-                doc.LoadHtml(xml);
+                    // Set new datetime
+                    this.lastXmlApiDownloadDateTime = DateTime.Now;
 
-                var image = doc.DocumentNode.SelectSingleNode("//image");
+                    // Prepare data table
+                    this.dataTable = new DataTable();
 
-                var directoryPath = Path.Combine(this.directory, this.GetValidDirectoryName(title));
+                    this.dataTable.Columns.Add("Id");
+                    this.dataTable.Columns.Add("Year");
+                    this.dataTable.Columns.Add("Title");
 
-                this.filePath = Path.Combine(directoryPath, Path.GetFileName(image.InnerHtml));
+                    // Process fetched XML
 
-                Directory.CreateDirectory(directoryPath);
+                    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
 
-                await webClient.DownloadFileTaskAsync(new Uri(image.InnerHtml), this.filePath);
+                    doc.LoadHtml(xml);
 
-                if (File.Exists(this.filePath))
-                {
-                    // Success
+                    var boardgames = doc.DocumentNode.SelectNodes("//boardgame");
+
+                    foreach (var game in boardgames)
+                    {
+                        // Set new data row
+                        DataRow dataRow = this.dataTable.NewRow();
+
+                        // Set values
+                        dataRow[0] = game.Attributes["objectid"].Value;
+                        dataRow[1] = game.ChildNodes["yearpublished"].InnerText;
+                        dataRow[2] = game.ChildNodes["name"].InnerText;
+
+                        // Add to data table 
+                        this.dataTable.Rows.Add(dataRow);
+                    }
+
+                    // Update data grid view
+                    this.gameDataGridView.DataSource = null;
+                    this.gameDataGridView.DataSource = this.dataTable;
+                    this.gameDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+                    this.gameDataGridView.AutoResizeColumns();
+                    this.gameDataGridView.Refresh();
+                    this.gameDataGridView.ClearSelection();
+                    this.gameDataGridView.CurrentCell = null;
+
+                    // Remove from list
                     this.downloadListBox.Items.RemoveAt(0);
+
+                    // Advise user
+                    this.Text = "Please click next gane title cell to process";
+                }
+                catch (Exception ex)
+                {
+                    // Let it fall through for next iteration
                 }
             }
-            catch
+            else
             {
-                // Let it fall through for next iteration
+                /* Download image */
+
+                try
+                {
+                    var id = item[0];
+                    var title = item[1];
+
+                    this.resultToolStripStatusLabel.Text = $"Downloading game info: \"{title}\"...";
+
+                    WebClient webClient = new WebClient
+                    {
+                        Proxy = null
+                    };
+
+                    // Download xml for game id
+                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
+
+                    // Set new datetime
+                    this.lastXmlApiDownloadDateTime = DateTime.Now;
+
+                    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+                    doc.LoadHtml(xml);
+
+                    // Desription
+
+                    var desription = doc.DocumentNode.SelectSingleNode("//description");
+
+                    // Image
+
+                    var image = doc.DocumentNode.SelectSingleNode("//image");
+
+                    /*var directoryPath = Path.Combine(this.directory, this.GetValidDirectoryName(title));
+
+                    this.filePath = Path.Combine(directoryPath, Path.GetFileName(image.InnerHtml));
+
+                    Directory.CreateDirectory(directoryPath);
+
+                    await webClient.DownloadFileTaskAsync(new Uri(image.InnerHtml), this.filePath);
+
+                    if (File.Exists(this.filePath))
+                    {
+                        // Success
+                        this.downloadListBox.Items.RemoveAt(0);
+                    }*/
+                }
+                catch
+                {
+                    // Let it fall through for next iteration
+                }
             }
 
             if (this.downloadListBox.Items.Count > 0)
             {
                 // Next item
-                this.imageTimer.Start();
+                this.fetchTimer.Start();
             }
             else
             {
-                // All done
-                this.downloadListBox.Enabled = false;
+                if (this.gameListIndex == this.gameList.Count - 1)
+                {
+                    this.resultToolStripStatusLabel.Text = "All games have been fetched.";
 
-                this.resultToolStripStatusLabel.Text = "Queued items downloaded.";
+                    // Re-enable start button
+                    this.startButton.Enabled = true;
+                }
             }
         }
 
