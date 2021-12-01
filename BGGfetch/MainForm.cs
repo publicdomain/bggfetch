@@ -6,9 +6,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Timers;
 using System.Windows.Forms;
+
 
 namespace BGGfetch
 {
@@ -75,7 +78,7 @@ namespace BGGfetch
 
             imageTimer.AutoReset = false;
 
-            imageTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsedAsync);
+            //            imageTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsedAsync);
         }
 
         void GameTextBoxTextChanged(object sender, EventArgs e)
@@ -91,13 +94,6 @@ namespace BGGfetch
             {
                 this.directoryTextBox.Text = this.folderBrowserDialog.SelectedPath;
             }
-        }
-
-        void FetchFormFormClosing(object sender, FormClosingEventArgs e)
-        {
-            this.fetchedCountToolStripStatusLabel.Text = $"{this.fetchForm.Count}";
-
-            this.startButton.Enabled = true;
         }
 
         void StartButtonClick(object sender, EventArgs e)
@@ -224,12 +220,6 @@ namespace BGGfetch
             this.TopMost = this.alwaysOnTopToolStripMenuItem.Checked;
         }
 
-        void ExitToolStripMenuItemClick(object sender, EventArgs e)
-        {
-            // Close program        
-            this.Close();
-        }
-
         void DirectoryTextBoxDragDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -256,6 +246,33 @@ namespace BGGfetch
         void NextGameButtonClick(object sender, EventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Gets the name of the valid directory.
+        /// </summary>
+        /// <returns>The valid directory name.</returns>
+        /// <param name="directoryName">Directory name.</param>
+        private string GetValidDirectoryName(string directoryName)
+        {
+            var invalidCharList = new List<char>();
+
+            invalidCharList.AddRange(Path.GetInvalidFileNameChars());
+
+            invalidCharList.AddRange(Path.GetInvalidPathChars());
+
+            foreach (var c in invalidCharList)
+            {
+                directoryName = directoryName.Replace(c.ToString(), string.Empty);
+            }
+
+            return directoryName;
+        }
+
+        void ExitToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            // Close program        
+            this.Close();
         }
     }
 }
