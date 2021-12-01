@@ -41,6 +41,11 @@ namespace BGGfetch
         List<string> gameList;
 
         /// <summary>
+        /// The index of the game list.
+        /// </summary>
+        int gameListIndex = 0;
+
+        /// <summary>
         /// The directory.
         /// </summary>
         string directory;
@@ -78,7 +83,7 @@ namespace BGGfetch
 
             imageTimer.AutoReset = false;
 
-            //            imageTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsedAsync);
+            imageTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsedAsync);
         }
 
         void GameTextBoxTextChanged(object sender, EventArgs e)
@@ -267,6 +272,94 @@ namespace BGGfetch
             }
 
             return directoryName;
+        }
+
+        /// <summary>
+        /// Ons the timer elapsed.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
+        public async void OnTimerElapsedAsync(object sender, ElapsedEventArgs e)
+        {
+            // Basic checks
+            if (this.downloadListBox.Items.Count == 0)
+            {
+                this.imageTimer.Stop();
+
+                return;
+            }
+
+            // Diff check
+            TimeSpan timeDiff = DateTime.Now - this.lastXmlApiDownloadDateTime;
+
+            if (timeDiff.TotalSeconds < 5)
+            {
+                return;
+            }
+
+            /* Search */
+
+            /* Download image */
+
+            try
+            {
+                var xml = string.Empty;
+
+                var item = this.downloadListBox.Items[0].ToString().Split(new string[] { " | " }, StringSplitOptions.None);
+
+                var id = item[0];
+                var title = item[1];
+
+                this.resultToolStripStatusLabel.Text = $"Downloading game info: \"{title}\"...";
+
+                WebClient webClient = new WebClient
+                {
+                    Proxy = null
+                };
+
+                // Download xml for game id
+                xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
+
+                // Set new datetime
+                this.lastXmlApiDownloadDateTime = DateTime.Now;
+
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+                doc.LoadHtml(xml);
+
+                var image = doc.DocumentNode.SelectSingleNode("//image");
+
+                var directoryPath = Path.Combine(this.directory, this.GetValidDirectoryName(title));
+
+                this.filePath = Path.Combine(directoryPath, Path.GetFileName(image.InnerHtml));
+
+                Directory.CreateDirectory(directoryPath);
+
+                await webClient.DownloadFileTaskAsync(new Uri(image.InnerHtml), this.filePath);
+
+                if (File.Exists(this.filePath))
+                {
+                    // Success
+                    this.downloadListBox.Items.RemoveAt(0);
+                }
+            }
+            catch
+            {
+                // Let it fall through for next iteration
+            }
+
+            if (this.downloadListBox.Items.Count > 0)
+            {
+                // Next item
+                this.imageTimer.Start();
+            }
+            else
+            {
+                // All done
+                this.downloadListBox.Enabled = false;
+
+                this.resultToolStripStatusLabel.Text = "Queued items downloaded.";
+            }
         }
 
         void ExitToolStripMenuItemClick(object sender, EventArgs e)
