@@ -76,6 +76,7 @@
     <None Include="Resources\ReadSharp.dll" />
     <None Include="Resources\ReadSharp-LICENSE-MIT.txt" />
     <None Include="Resources\HtmlAgilityPack.dll" />
+    <None Include="Resources\HtmlAgilityPack-LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutForm.resx">
