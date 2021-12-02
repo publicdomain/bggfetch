@@ -126,7 +126,7 @@ namespace BGGfetch
             }
 
             // Change to results tab
-            this.tabControl.SelectTab("resultTabPage");
+            this.tabControl.SelectTab(1);
 
             // Set variables
             this.gameList = new List<string>(this.gameTextBox.Lines);
@@ -465,7 +465,17 @@ namespace BGGfetch
                 // Re-enable start button
                 this.startButton.Enabled = true;
             }
+        }
 
+        void GameImagePictureBoxMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                var files = new string[] { this.filePath };
+
+                this.gameImagePictureBox.DoDragDrop(new DataObject(DataFormats.FileDrop, files), DragDropEffects.Copy | DragDropEffects.Move);
+
+            }
         }
 
         void ExitToolStripMenuItemClick(object sender, EventArgs e)
