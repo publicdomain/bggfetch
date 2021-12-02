@@ -399,6 +399,7 @@ namespace BGGfetch
                 catch (Exception ex)
                 {
                     // Let it fall through for next iteration
+                    ;
                 }
             }
             else
@@ -408,7 +409,7 @@ namespace BGGfetch
                 try
                 {
                     var id = item[0];
-                    var title = item[1];
+                    var title = $"{item[2]}-{item[1]}";
 
                     this.resultToolStripStatusLabel.Text = $"Downloading game info: \"{title}\"...";
 
