@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
-
+using ReadSharp;
 
 namespace BGGfetch
 {
@@ -81,9 +81,11 @@ namespace BGGfetch
             System.Net.ServicePointManager.Expect100Continue = true;
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
 
-            fetchTimer.AutoReset = false;
+            fetchTimer.AutoReset = true;
 
             fetchTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsedAsync);
+
+            fetchTimer.Start();
         }
 
         void GameTextBoxTextChanged(object sender, EventArgs e)
@@ -136,9 +138,6 @@ namespace BGGfetch
 
             // TODO Disable start button until finishing [Can be changed to "STOP FETCHING"]
             this.startButton.Enabled = false;
-
-            // Start the timer
-            this.fetchTimer.Start();
         }
 
         void NewToolStripMenuItemClick(object sender, EventArgs e)
@@ -260,7 +259,16 @@ namespace BGGfetch
 
         void GameDataGridViewClick(object sender, EventArgs e)
         {
-
+            try
+            {
+                // Add to download list box
+                this.downloadListBox.Items.Add($"{this.gameDataGridView.SelectedRows[0].Cells[0].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[1].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[2].Value.ToString()}");
+            }
+            catch
+            {
+                // Let it fall through
+                ;
+            }
         }
 
         void NextGameButtonClick(object sender, EventArgs e)
@@ -303,8 +311,6 @@ namespace BGGfetch
             // Basic checks
             if (this.downloadListBox.Items.Count == 0)
             {
-                this.fetchTimer.Stop();
-
                 return;
             }
 
@@ -369,13 +375,13 @@ namespace BGGfetch
                         // Set values
                         dataRow[0] = game.Attributes["objectid"].Value;
                         dataRow[1] = game.ChildNodes["yearpublished"].InnerText;
-                        dataRow[2] = game.ChildNodes["name"].InnerText;
+                        dataRow[2] = HtmlUtilities.ConvertToPlainText(game.ChildNodes["name"].InnerHtml);
 
                         // Add to data table 
                         this.dataTable.Rows.Add(dataRow);
                     }
 
-                    // Update data grid view
+                    // TODO)DO Update data grid view [Check clear & refreshing]
                     this.gameDataGridView.DataSource = null;
                     this.gameDataGridView.DataSource = this.dataTable;
                     this.gameDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
@@ -388,7 +394,7 @@ namespace BGGfetch
                     this.downloadListBox.Items.RemoveAt(0);
 
                     // Advise user
-                    this.Text = "Please click next gane title cell to process";
+                    this.Text = "Please click a gane to process";
                 }
                 catch (Exception ex)
                 {
@@ -425,23 +431,24 @@ namespace BGGfetch
 
                     var desription = doc.DocumentNode.SelectSingleNode("//description");
 
+                    this.gameInfoTextBox.Text = HtmlUtilities.ConvertToPlainText(desription.InnerHtml);
+
                     // Image
 
                     var image = doc.DocumentNode.SelectSingleNode("//image");
 
-                    /*var directoryPath = Path.Combine(this.directory, this.GetValidDirectoryName(title));
-
-                    this.filePath = Path.Combine(directoryPath, Path.GetFileName(image.InnerHtml));
-
-                    Directory.CreateDirectory(directoryPath);
+                    this.filePath = Path.Combine(this.directory, this.GetValidDirectoryName($"{title}_{Path.GetFileName(image.InnerHtml)}"));
 
                     await webClient.DownloadFileTaskAsync(new Uri(image.InnerHtml), this.filePath);
 
                     if (File.Exists(this.filePath))
                     {
+                        // Load picture
+                        this.gameImagePictureBox.Image = Image.FromFile(this.filePath);
+
                         // Success
                         this.downloadListBox.Items.RemoveAt(0);
-                    }*/
+                    }
                 }
                 catch
                 {
@@ -449,21 +456,15 @@ namespace BGGfetch
                 }
             }
 
-            if (this.downloadListBox.Items.Count > 0)
+            // Check iif all games have been processed
+            if (this.downloadListBox.Items.Count == 0 && this.gameListIndex == this.gameList.Count - 1)
             {
-                // Next item
-                this.fetchTimer.Start();
-            }
-            else
-            {
-                if (this.gameListIndex == this.gameList.Count - 1)
-                {
-                    this.resultToolStripStatusLabel.Text = "All games have been fetched.";
+                this.resultToolStripStatusLabel.Text = "All games have been fetched.";
 
-                    // Re-enable start button
-                    this.startButton.Enabled = true;
-                }
+                // Re-enable start button
+                this.startButton.Enabled = true;
             }
+
         }
 
         void ExitToolStripMenuItemClick(object sender, EventArgs e)
