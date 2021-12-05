@@ -13,7 +13,6 @@ using System.Timers;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using PublicDomain;
-using ReadSharp;
 
 namespace BGGfetch
 {
@@ -402,7 +401,7 @@ namespace BGGfetch
                         // Set values
                         dataRow[0] = game.Attributes["objectid"].Value;
                         dataRow[1] = game.ChildNodes["yearpublished"].InnerText;
-                        dataRow[2] = HtmlUtilities.ConvertToPlainText(game.ChildNodes["name"].InnerHtml);
+                        dataRow[2] = game.ChildNodes["name"].InnerText;
 
                         // Add to data table 
                         this.dataTable.Rows.Add(dataRow);
@@ -459,7 +458,7 @@ namespace BGGfetch
 
                     var desription = doc.DocumentNode.SelectSingleNode("//description");
 
-                    this.gameInfoTextBox.Text = HtmlUtilities.ConvertToPlainText(desription.InnerHtml);
+                    this.gameInfoTextBox.Text = desription.InnerText;
 
                     // Image
 
@@ -522,6 +521,32 @@ namespace BGGfetch
 
                 // Return populated settings data
                 return xmlSerializer.Deserialize(fileStream) as SettingsData;
+            }
+        }
+
+        /// <summary>
+        /// Saves the settings file.
+        /// </summary>
+        /// <param name="settingsFilePath">Settings file path.</param>
+        /// <param name="settingsDataParam">Settings data parameter.</param>
+        private void SaveSettingsFile(string settingsFilePath, SettingsData settingsDataParam)
+        {
+            try
+            {
+                // Use stream writer
+                using (StreamWriter streamWriter = new StreamWriter(settingsFilePath, false))
+                {
+                    // Set xml serialzer
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(SettingsData));
+
+                    // Serialize settings data
+                    xmlSerializer.Serialize(streamWriter, settingsDataParam);
+                }
+            }
+            catch (Exception exception)
+            {
+                // Advise user
+                MessageBox.Show($"Error saving settings file.{Environment.NewLine}{Environment.NewLine}Message:{Environment.NewLine}{exception.Message}", "File error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

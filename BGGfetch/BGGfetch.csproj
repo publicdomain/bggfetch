@@ -49,9 +49,6 @@
     <Reference Include="HtmlAgilityPack">
       <HintPath>Resources\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="ReadSharp">
-      <HintPath>Resources\ReadSharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutForm.cs" />
