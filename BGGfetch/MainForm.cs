@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
+using PublicDomain;
 using ReadSharp;
 
 namespace BGGfetch
@@ -62,6 +63,16 @@ namespace BGGfetch
         private Icon associatedIcon = null;
 
         /// <summary>
+        /// The settings data.
+        /// </summary>
+        private SettingsData settingsData = null;
+
+        /// <summary>
+        /// The settings data path.
+        /// </summary>
+        private string settingsDataPath = $"{Application.ProductName}-SettingsData.txt";
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="T:BGGfetch.MainForm"/> class.
         /// </summary>
         public MainForm()
@@ -80,6 +91,21 @@ namespace BGGfetch
             // SSL fix
             System.Net.ServicePointManager.Expect100Continue = true;
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+
+
+            /* Settings data */
+
+            // Check for settings file
+            if (!File.Exists(this.settingsDataPath))
+            {
+                // Create new settings file
+                //#this.SaveSettingsFile(this.settingsDataPath, new SettingsData());
+            }
+
+            // Load settings from disk
+            //#this.settingsData = this.LoadSettingsFile(this.settingsDataPath);
+
+            /* Timer  */
 
             fetchTimer.AutoReset = true;
 
@@ -449,6 +475,8 @@ namespace BGGfetch
 
                         // Success
                         this.downloadListBox.Items.RemoveAt(0);
+
+                        this.resultToolStripStatusLabel.Text = $"Downloaded game info for \"{title}\"...";
                     }
                 }
                 catch
