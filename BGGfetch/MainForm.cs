@@ -95,23 +95,45 @@ namespace BGGfetch
 
             /* Settings data */
 
+            // Saved settings flag
+            bool prevSettingsData = false;
+
             // Check for settings file
             if (!File.Exists(this.settingsDataPath))
             {
                 // Create new settings file
-                //#this.SaveSettingsFile(this.settingsDataPath, new SettingsData());
+                this.SaveSettingsFile(this.settingsDataPath, new SettingsData());
+
+                // Center form
+                this.CenterToScreen();
+            }
+            else
+            {
+                // Set flag
+                prevSettingsData = true;
             }
 
             // Load settings from disk
-            //#this.settingsData = this.LoadSettingsFile(this.settingsDataPath);
+            this.settingsData = this.LoadSettingsFile(this.settingsDataPath);
+
+            // Check for previous settings
+            if (prevSettingsData)
+            {
+                // Set values
+                this.directoryTextBox.Text = this.settingsData.Directory;
+                this.Location = this.settingsData.Location;
+                this.Size = this.settingsData.Size;
+                this.splitContainer.SplitterDistance = this.settingsData.VerticalSplit;
+                this.splitContainer2.SplitterDistance = this.settingsData.HorizontalSplit;
+            }
 
             /* Timer  */
 
-            fetchTimer.AutoReset = true;
+            fetchTimer.AutoReset = false;
 
             fetchTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsedAsync);
 
-            fetchTimer.Start();
+            this.fetchTimer.Start();
         }
 
         void GameTextBoxTextChanged(object sender, EventArgs e)
@@ -337,7 +359,7 @@ namespace BGGfetch
             // Basic checks
             if (this.downloadListBox.Items.Count == 0)
             {
-                return;
+                goto exitAndRestart;
             }
 
             // Diff check
@@ -345,8 +367,11 @@ namespace BGGfetch
 
             if (timeDiff.TotalSeconds < 5)
             {
-                return;
+                goto exitAndRestart;
             }
+
+            // Set success flag
+            bool success = false;
 
             /* Search or fetch game info */
 
@@ -374,9 +399,7 @@ namespace BGGfetch
 
                     // Download xml for game id
                     xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}"));
-
-                    // Set new datetime
-                    this.lastXmlApiDownloadDateTime = DateTime.Now;
+                    //# xml = File.ReadAllText("search.xml");
 
                     // Prepare data table
                     this.dataTable = new DataTable();
@@ -398,9 +421,19 @@ namespace BGGfetch
                         // Set new data row
                         DataRow dataRow = this.dataTable.NewRow();
 
-                        // Set values
+                        /* Set values */
                         dataRow[0] = game.Attributes["objectid"].Value;
-                        dataRow[1] = game.ChildNodes["yearpublished"].InnerText;
+
+                        // May not have year
+                        try
+                        {
+                            dataRow[1] = game.ChildNodes["yearpublished"].InnerText;
+                        }
+                        catch (Exception ex)
+                        {
+                            dataRow[1] = "n/a";
+                        }
+
                         dataRow[2] = game.ChildNodes["name"].InnerText;
 
                         // Add to data table 
@@ -416,16 +449,16 @@ namespace BGGfetch
                     this.gameDataGridView.ClearSelection();
                     this.gameDataGridView.CurrentCell = null;
 
-                    // Remove from list
-                    this.downloadListBox.Items.RemoveAt(0);
-
                     // Advise user
-                    this.Text = "Please click a gane to process";
+                    this.resultToolStripStatusLabel.Text = "Please click a gane to process";
+
+                    // Set flag
+                    success = true;
                 }
                 catch (Exception ex)
                 {
-                    // Let it fall through for next iteration
-                    ;
+                    // Log to file
+                    File.AppendAllText("BGGfetch-log.txt", $"{Environment.NewLine}{Environment.NewLine}Game search:{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 }
             }
             else
@@ -446,6 +479,7 @@ namespace BGGfetch
 
                     // Download xml for game id
                     xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
+                    //# xml = File.ReadAllText("1406.xml");
 
                     // Set new datetime
                     this.lastXmlApiDownloadDateTime = DateTime.Now;
@@ -456,32 +490,55 @@ namespace BGGfetch
 
                     // Desription
 
-                    var desription = doc.DocumentNode.SelectSingleNode("//description");
+                    try
+                    {
+                        var desription = doc.DocumentNode.SelectSingleNode("//description");
 
-                    this.gameInfoTextBox.Text = desription.InnerText;
+                        this.gameInfoRichTextBox.Text = desription.InnerText;
+                    }
+                    catch (Exception ex)
+                    {
+                        this.gameInfoRichTextBox.Text = "Description is not present.";
+                    }
 
                     // Image
 
-                    var image = doc.DocumentNode.SelectSingleNode("//image");
+                    Uri imageUri = null;
 
-                    this.filePath = Path.Combine(this.directory, this.GetValidDirectoryName($"{title}_{Path.GetFileName(image.InnerHtml)}"));
-
-                    await webClient.DownloadFileTaskAsync(new Uri(image.InnerHtml), this.filePath);
-
-                    if (File.Exists(this.filePath))
+                    try
                     {
-                        // Load picture
-                        this.gameImagePictureBox.Image = Image.FromFile(this.filePath);
+                        var image = doc.DocumentNode.SelectSingleNode("//image");
 
-                        // Success
-                        this.downloadListBox.Items.RemoveAt(0);
+                        imageUri = new Uri(image.InnerHtml);
 
-                        this.resultToolStripStatusLabel.Text = $"Downloaded game info for \"{title}\"...";
+                        this.filePath = Path.Combine(this.directory, this.GetValidDirectoryName($"{title}_{Path.GetFileName(image.InnerHtml)}"));
                     }
+                    catch (Exception ex)
+                    {
+                        // TODO Image not present [Advise user or log]
+                    }
+
+                    if (imageUri != null)
+                    {
+                        await webClient.DownloadFileTaskAsync(imageUri, this.filePath);
+
+                        if (File.Exists(this.filePath))
+                        {
+                            // Load picture
+                            this.gameImagePictureBox.Image = Image.FromFile(this.filePath);
+                        }
+                    }
+
+                    // Advise user
+                    this.resultToolStripStatusLabel.Text = $"Downloaded game info for \"{title}\"...";
+
+                    // Set flag
+                    success = true;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Let it fall through for next iteration
+                    // Log to file
+                    File.AppendAllText("BGGfetch-log.txt", $"{Environment.NewLine}{Environment.NewLine}Download info:{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.Message}");
                 }
             }
 
@@ -493,6 +550,18 @@ namespace BGGfetch
                 // Re-enable start button
                 this.startButton.Enabled = true;
             }
+
+            if (success)
+            {
+                // Remove from list box 
+                this.downloadListBox.Items.RemoveAt(0);
+
+                // Set new datetime
+                this.lastXmlApiDownloadDateTime = DateTime.Now;
+            }
+
+        exitAndRestart:
+            fetchTimer.Start();
         }
 
         void GameImagePictureBoxMouseMove(object sender, MouseEventArgs e)
@@ -548,6 +617,26 @@ namespace BGGfetch
                 // Advise user
                 MessageBox.Show($"Error saving settings file.{Environment.NewLine}{Environment.NewLine}Message:{Environment.NewLine}{exception.Message}", "File error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        void MainFormLoad(object sender, EventArgs e)
+        {
+
+        }
+
+        void MainFormFormClosing(object sender, FormClosingEventArgs e)
+        {
+            /* Setiings data values */
+
+            // Set values
+            this.settingsData.Directory = this.directoryTextBox.Text;
+            this.settingsData.Location = this.Location;
+            this.settingsData.Size = this.Size;
+            this.settingsData.VerticalSplit = this.splitContainer.SplitterDistance;
+            this.settingsData.HorizontalSplit = this.splitContainer2.SplitterDistance;
+
+            // Save settings data to disk
+            this.SaveSettingsFile(this.settingsDataPath, this.settingsData);
         }
 
         void ExitToolStripMenuItemClick(object sender, EventArgs e)

@@ -27,30 +27,30 @@ namespace PublicDomain
         /// Gets or sets the directory.
         /// </summary>
         /// <value>The directory.</value>
-        public string Directory { get; set; }
+        public string Directory { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the location.
         /// </summary>
         /// <value>The location.</value>
-        public Point Location { get; set; }
+        public Point Location { get; set; } = new Point(0, 0);
 
         /// <summary>
         /// Gets or sets the size.
         /// </summary>
         /// <value>The size.</value>
-        public Size Size { get; set; }
+        public Size Size { get; set; } = new Size(0, 0);
 
         /// <summary>
         /// Gets or sets the vertical split.
         /// </summary>
         /// <value>The vertical split.</value>
-        public int VerticalSplit { get; set; }
+        public int VerticalSplit { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the horizontal split.
         /// </summary>
         /// <value>The horizontal split.</value>
-        public int HorizontalSplit { get; set; }
+        public int HorizontalSplit { get; set; } = 0;
     }
 }
