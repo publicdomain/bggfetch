@@ -49,9 +49,6 @@
     <Reference Include="HtmlAgilityPack">
       <HintPath>Resources\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="MarkupConverter">
-      <HintPath>Resources\MarkupConverter.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutForm.cs" />
@@ -76,8 +73,6 @@
     <None Include="Resources\publicdomain.com_7-8-vista-xp.ico" />
     <None Include="Resources\HtmlAgilityPack.dll" />
     <None Include="Resources\HtmlAgilityPack-LICENSE.txt" />
-    <None Include="Resources\MarkupConverter.dll" />
-    <None Include="Resources\MarkupConverter-LICENSE-2.0.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutForm.resx">

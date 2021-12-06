@@ -12,7 +12,6 @@ using System.Text;
 using System.Timers;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using MarkupConverter;
 using PublicDomain;
 
 namespace BGGfetch
@@ -448,8 +447,8 @@ namespace BGGfetch
                     };
 
                     // Download xml for game id
-                    //#xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}"));
-                    xml = File.ReadAllText("search.xml");
+                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}"));
+                    //# xml = File.ReadAllText("search.xml");
 
                     // Prepare data table
                     this.dataTable = new DataTable();
@@ -528,8 +527,8 @@ namespace BGGfetch
                     };
 
                     // Download xml for game id
-                    //# xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
-                    xml = File.ReadAllText("1406.xml");
+                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
+                    //# xml = File.ReadAllText("1406.xml");
 
                     // Set new datetime
                     this.lastXmlApiDownloadDateTime = DateTime.Now;
@@ -538,20 +537,27 @@ namespace BGGfetch
 
                     doc.LoadHtml(xml);
 
-                    // Desription
+                    // TODO Desription [Node detection/handling can be improved]
 
                     try
                     {
-                        var desription = doc.DocumentNode.SelectSingleNode("//description");
+                        var desriptionNode = doc.DocumentNode.SelectSingleNode("//description");
 
-                        this.gameInfoRichTextBox.Text = desription.InnerText;
+                        string description = WebUtility.HtmlDecode(desriptionNode.InnerText);
+
+                        description = description.Replace("<br/>", Environment.NewLine).Replace("&amp;", "&").Replace("&lt;", "<").Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&apos;", "'");
+
+                        this.gameInfoTextBox.Text = description;
                     }
                     catch (Exception ex)
                     {
-                        this.gameInfoRichTextBox.Text = "Description is not present.";
+                        //#
+                        MessageBox.Show(ex.Message);
+
+                        this.gameInfoTextBox.Text = "Description is not present.";
                     }
 
-                    // Image
+                    // TODO Image [Node detection/handling can be improved]
 
                     Uri imageUri = null;
 
