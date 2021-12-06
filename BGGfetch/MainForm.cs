@@ -484,7 +484,7 @@ namespace BGGfetch
                             dataRow[1] = "n/a";
                         }
 
-                        dataRow[2] = game.ChildNodes["name"].InnerText;
+                        dataRow[2] = WebUtility.HtmlDecode(game.ChildNodes["name"].InnerText);
 
                         // Add to data table 
                         this.dataTable.Rows.Add(dataRow);
