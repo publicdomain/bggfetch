@@ -12,6 +12,7 @@ using System.Text;
 using System.Timers;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using MarkupConverter;
 using PublicDomain;
 
 namespace BGGfetch
@@ -249,7 +250,56 @@ namespace BGGfetch
 
         void AboutToolStripMenuItemClick(object sender, EventArgs e)
         {
-            MessageBox.Show("AboutToolStripMenuItemClick placeholder :)");
+            // Set license text
+            var licenseText = $"CC0 1.0 Universal (CC0 1.0) - Public Domain Dedication{Environment.NewLine}" +
+                $"https://creativecommons.org/publicdomain/zero/1.0/legalcode{Environment.NewLine}{Environment.NewLine}" +
+                $"Libraries and icons have separate licenses.{Environment.NewLine}{Environment.NewLine}" +
+                $"MarkupConverter library by figuemon - Apache 2.0 License{Environment.NewLine}" +
+                $"https://github.com/figuemon/MarkupConverter{Environment.NewLine}{Environment.NewLine}" +
+                $"HtmlAgilityPack library by zzzprojects -  MIT License{Environment.NewLine}" +
+                $"https://github.com/zzzprojects/html-agility-pack{Environment.NewLine}{Environment.NewLine}" +
+                $"Speed limit icon by Clker-Free-Vector-Images- Pixabay License{Environment.NewLine}" +
+                $"https://pixabay.com/vectors/speed-limit-car-safety-law-ahead-43796/{Environment.NewLine}{Environment.NewLine}" +
+                $"Patreon icon used according to published brand guidelines{Environment.NewLine}" +
+                $"https://www.patreon.com/brand{Environment.NewLine}{Environment.NewLine}" +
+                $"GitHub mark icon used according to published logos and usage guidelines{Environment.NewLine}" +
+                $"https://github.com/logos{Environment.NewLine}{Environment.NewLine}" +
+                $"DonationCoder icon used with permission{Environment.NewLine}" +
+                $"https://www.donationcoder.com/forum/index.php?topic=48718{Environment.NewLine}{Environment.NewLine}" +
+                $"PublicDomain icon is based on the following source images:{Environment.NewLine}{Environment.NewLine}" +
+                $"Bitcoin by GDJ - Pixabay License{Environment.NewLine}" +
+                $"https://pixabay.com/vectors/bitcoin-digital-currency-4130319/{Environment.NewLine}{Environment.NewLine}" +
+                $"Letter P by ArtsyBee - Pixabay License{Environment.NewLine}" +
+                $"https://pixabay.com/illustrations/p-glamour-gold-lights-2790632/{Environment.NewLine}{Environment.NewLine}" +
+                $"Letter D by ArtsyBee - Pixabay License{Environment.NewLine}" +
+                $"https://pixabay.com/illustrations/d-glamour-gold-lights-2790573/{Environment.NewLine}{Environment.NewLine}";
+
+            // Prepend sponsors
+            licenseText = $"RELEASE SPONSORS:{Environment.NewLine}{Environment.NewLine}* Jesse Reichler{Environment.NewLine}{Environment.NewLine}=========={Environment.NewLine}{Environment.NewLine}" + licenseText;
+
+            // Set title
+            string programTitle = typeof(MainForm).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyTitleAttribute>().Title;
+
+            // Set version for generating semantic version 
+            Version version = typeof(MainForm).GetTypeInfo().Assembly.GetName().Version;
+
+            // Set about form
+            var aboutForm = new AboutForm(
+                $"About {programTitle}",
+                $"{programTitle} {version.Major}.{version.Minor}.{version.Build}",
+                $"Made for: Mouser{Environment.NewLine}DonationCoder.com{Environment.NewLine}Day #340, Week #49 @ December 06, 2021",
+                licenseText,
+                this.Icon.ToBitmap())
+            {
+                // Set about form icon
+                Icon = this.associatedIcon,
+
+                // Set always on top
+                TopMost = this.TopMost
+            };
+
+            // Show about form
+            aboutForm.ShowDialog();
         }
 
         void FreeReleasesPublicDomainIsToolStripMenuItemClick(object sender, EventArgs e)
@@ -398,8 +448,8 @@ namespace BGGfetch
                     };
 
                     // Download xml for game id
-                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}"));
-                    //# xml = File.ReadAllText("search.xml");
+                    //#xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}"));
+                    xml = File.ReadAllText("search.xml");
 
                     // Prepare data table
                     this.dataTable = new DataTable();
@@ -478,8 +528,8 @@ namespace BGGfetch
                     };
 
                     // Download xml for game id
-                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
-                    //# xml = File.ReadAllText("1406.xml");
+                    //# xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
+                    xml = File.ReadAllText("1406.xml");
 
                     // Set new datetime
                     this.lastXmlApiDownloadDateTime = DateTime.Now;

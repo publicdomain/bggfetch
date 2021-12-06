@@ -3,7 +3,7 @@
 //     https://creativecommons.org/publicdomain/zero/1.0/legalcode
 // </copyright>
 
-namespace PublicDomainWeekly
+namespace PublicDomain
 {
     // Directives
     using System;
