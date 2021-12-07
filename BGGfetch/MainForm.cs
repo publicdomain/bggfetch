@@ -195,9 +195,6 @@ namespace BGGfetch
 
             // Begin game search by triggering next game
             this.nextGameButton.PerformClick();
-
-            // TODO Disable start button until finishing [Can be changed to "STOP FETCHING"]
-            this.startButton.Enabled = false;
         }
 
         /// <summary>
@@ -214,9 +211,19 @@ namespace BGGfetch
             this.fetchedCount = 0;
             this.fetchedCountToolStripStatusLabel.Text = "0";
 
+            this.dataTable = null;
+            this.gameDataGridView.DataSource = null;
+            this.gameInfoTextBox.Clear();
+            this.gameImagePictureBox.Image = null;
+
             this.gameTextBox.Focus();
         }
 
+        /// <summary>
+        /// Handles the open tool strip menu item click event.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
         void OpenToolStripMenuItemClick(object sender, EventArgs e)
         {
             // Reset file name
@@ -388,8 +395,29 @@ namespace BGGfetch
             }
         }
 
-        void NextGameButtonClick(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the next game button click event.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
+        private void OnNextGameButtonClick(object sender, EventArgs e)
         {
+            // Check fetched count
+            if (this.fetchedCount == this.gameList.Count)
+            {
+                // Advise user
+                MessageBox.Show("No more games in the list.", "All fetched", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Halt flow
+                return;
+            }
+
+            // Reset
+            this.gameInfoTextBox.Clear();
+            this.gameImagePictureBox.Image = null;
+            this.dataTable = null;
+            this.gameDataGridView.DataSource = null;
+
             // Add to download list box
             this.downloadListBox.Items.Add($"search | {this.gameList[this.gameListIndex]}");
 
@@ -624,8 +652,6 @@ namespace BGGfetch
             {
                 this.resultToolStripStatusLabel.Text = "All games have been fetched.";
 
-                // Re-enable start button
-                this.startButton.Enabled = true;
             }
 
             if (success)

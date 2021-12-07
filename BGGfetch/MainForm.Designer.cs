@@ -519,7 +519,7 @@ namespace BGGfetch
         	this.nextGameButton.TabIndex = 1;
         	this.nextGameButton.Text = "&Next game";
         	this.nextGameButton.UseVisualStyleBackColor = true;
-        	this.nextGameButton.Click += new System.EventHandler(this.NextGameButtonClick);
+        	this.nextGameButton.Click += new System.EventHandler(this.OnNextGameButtonClick);
         	// 
         	// splitContainer2
         	// 
