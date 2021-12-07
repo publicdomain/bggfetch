@@ -406,7 +406,7 @@ namespace BGGfetch
             if (this.fetchedCount == this.gameList.Count)
             {
                 // Advise user
-                MessageBox.Show("No more games in the list.", "All fetched", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("No more games to fetch.", "All fetched", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 // Halt flow
                 return;
