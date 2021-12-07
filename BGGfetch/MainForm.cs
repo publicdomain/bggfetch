@@ -24,37 +24,42 @@ namespace BGGfetch
         /// <summary>
         /// The data table.
         /// </summary>
-        DataTable dataTable = null;
+        private DataTable dataTable = null;
 
         /// <summary>
         /// The last download date time.
         /// </summary>
-        DateTime lastXmlApiDownloadDateTime = DateTime.Now;
+        private DateTime lastXmlApiDownloadDateTime = DateTime.Now;
 
         /// <summary>
         /// The fetch timer.
         /// </summary>
-        System.Timers.Timer fetchTimer = new System.Timers.Timer(1000);
+        private System.Timers.Timer fetchTimer = new System.Timers.Timer(1000);
 
         /// <summary>
         /// The game list.
         /// </summary>
-        List<string> gameList;
+        private List<string> gameList;
 
         /// <summary>
         /// The index of the game list.
         /// </summary>
-        int gameListIndex = 0;
+        private int gameListIndex = 0;
 
         /// <summary>
         /// The directory.
         /// </summary>
-        string directory;
+        private string directory;
 
         /// <summary>
         /// The file path.
         /// </summary>
-        string filePath;
+        private string filePath;
+
+        /// <summary>
+        /// The fetched count.
+        /// </summary>
+        private int fetchedCount = 0;
 
         /// <summary>
         /// Gets or sets the associated icon.
@@ -151,6 +156,11 @@ namespace BGGfetch
             }
         }
 
+        /// <summary>
+        /// Handles the start button click event.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
         void StartButtonClick(object sender, EventArgs e)
         {
             // Something to work with
@@ -180,6 +190,8 @@ namespace BGGfetch
             this.gameList = new List<string>(this.gameTextBox.Lines);
             this.gameListIndex = 0;
             this.directory = this.directoryTextBox.Text;
+            this.fetchedCount = 0;
+            this.fetchedCountToolStripStatusLabel.Text = "0";
 
             // Begin game search by triggering next game
             this.nextGameButton.PerformClick();
@@ -188,11 +200,19 @@ namespace BGGfetch
             this.startButton.Enabled = false;
         }
 
+        /// <summary>
+        /// News the tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
         void NewToolStripMenuItemClick(object sender, EventArgs e)
         {
             this.gameTextBox.Clear();
 
             this.directoryTextBox.Clear();
+
+            this.fetchedCount = 0;
+            this.fetchedCountToolStripStatusLabel.Text = "0";
 
             this.gameTextBox.Focus();
         }
@@ -501,6 +521,10 @@ namespace BGGfetch
                     // Advise user
                     this.resultToolStripStatusLabel.Text = "Please click a gane to process";
 
+                    // Update fetched count
+                    this.fetchedCount++;
+                    this.fetchedCountToolStripStatusLabel.Text = this.fetchedCount.ToString();
+
                     // Set flag
                     success = true;
                 }
@@ -551,9 +575,6 @@ namespace BGGfetch
                     }
                     catch (Exception ex)
                     {
-                        //#
-                        MessageBox.Show(ex.Message);
-
                         this.gameInfoTextBox.Text = "Description is not present.";
                     }
 
