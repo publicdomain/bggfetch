@@ -42,6 +42,11 @@ namespace BGGfetch
         private List<string> gameList;
 
         /// <summary>
+        /// The download list.
+        /// </summary>
+        private List<string> downloadList = new List<string>();
+
+        /// <summary>
         /// The index of the game list.
         /// </summary>
         private int gameListIndex = 0;
@@ -129,7 +134,7 @@ namespace BGGfetch
                 this.Location = this.settingsData.Location;
                 this.Size = this.settingsData.Size;
                 this.splitContainer.SplitterDistance = this.settingsData.VerticalSplit;
-                this.splitContainer2.SplitterDistance = this.settingsData.HorizontalSplit;
+                this.splitContainer1.SplitterDistance = this.settingsData.HorizontalSplit;
             }
 
             /* Timer  */
@@ -141,12 +146,12 @@ namespace BGGfetch
             this.fetchTimer.Start();
         }
 
-        void GameTextBoxTextChanged(object sender, EventArgs e)
-        {
-            this.gameCountToolStripStatusLabel.Text = this.gameTextBox.Lines.Length.ToString();
-        }
-
-        void BrowseButtonClick(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the browse button click.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnBrowseButtonClick(object sender, EventArgs e)
         {
             this.folderBrowserDialog.SelectedPath = string.Empty;
 
@@ -157,52 +162,11 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the start button click event.
+        /// Handles the new tool strip menu item click.
         /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
-        void StartButtonClick(object sender, EventArgs e)
-        {
-            // Something to work with
-            if (this.gameTextBox.Text.Length == 0)
-            {
-                MessageBox.Show("Please enter at least one game to continue.", "Games", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                this.gameTextBox.Focus();
-
-                return;
-            }
-
-            // Valid directory
-            if (!Directory.Exists(this.directoryTextBox.Text))
-            {
-                MessageBox.Show("Target save directory must exist.", "Directory", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                this.directoryTextBox.Focus();
-
-                return;
-            }
-
-            // Change to results tab
-            this.tabControl.SelectTab(1);
-
-            // Set variables
-            this.gameList = new List<string>(this.gameTextBox.Lines);
-            this.gameListIndex = 0;
-            this.directory = this.directoryTextBox.Text;
-            this.fetchedCount = 0;
-            this.fetchedCountToolStripStatusLabel.Text = "0";
-
-            // Begin game search by triggering next game
-            this.nextGameButton.PerformClick();
-        }
-
-        /// <summary>
-        /// News the tool strip menu item click.
-        /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
-        void NewToolStripMenuItemClick(object sender, EventArgs e)
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnNewToolStripMenuItemClick(object sender, EventArgs e)
         {
             this.gameTextBox.Clear();
 
@@ -222,9 +186,9 @@ namespace BGGfetch
         /// <summary>
         /// Handles the open tool strip menu item click event.
         /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
-        void OpenToolStripMenuItemClick(object sender, EventArgs e)
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OpenToolStripMenuItemClick(object sender, EventArgs e)
         {
             // Reset file name
             this.openFileDialog.FileName = string.Empty;
@@ -254,7 +218,12 @@ namespace BGGfetch
             }
         }
 
-        void SaveToolStripMenuItemClick(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the save tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnSaveToolStripMenuItemClick(object sender, EventArgs e)
         {
             this.saveFileDialog.FileName = string.Empty;
             try
@@ -274,7 +243,12 @@ namespace BGGfetch
             MessageBox.Show($"Saved {this.gameTextBox.Lines.Length} items to \"{Path.GetFileName(this.saveFileDialog.FileName)}\"", "File saved", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        void AboutToolStripMenuItemClick(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the about tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnAboutToolStripMenuItemClick(object sender, EventArgs e)
         {
             // Set license text
             var licenseText = $"CC0 1.0 Universal (CC0 1.0) - Public Domain Dedication{Environment.NewLine}" +
@@ -313,7 +287,7 @@ namespace BGGfetch
             var aboutForm = new AboutForm(
                 $"About {programTitle}",
                 $"{programTitle} {version.Major}.{version.Minor}.{version.Build}",
-                $"Made for: Mouser{Environment.NewLine}DonationCoder.com{Environment.NewLine}Day #340, Week #49 @ December 06, 2021",
+                $"Made for: Mouser{Environment.NewLine}DonationCoder.com{Environment.NewLine}Day #008, Week #01 @ January 08, 2022",
                 licenseText,
                 this.Icon.ToBitmap())
             {
@@ -328,19 +302,34 @@ namespace BGGfetch
             aboutForm.ShowDialog();
         }
 
-        void FreeReleasesPublicDomainIsToolStripMenuItemClick(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the free releases public domain is tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnFreeReleasesPublicDomainIsToolStripMenuItemClick(object sender, EventArgs e)
         {
             // Open our website
             Process.Start("https://publicdomain.is");
         }
 
-        void OriginalThreadDonationCodercomToolStripMenuItemClick(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the original thread donation codercom tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnOriginalThreadDonationCodercomToolStripMenuItemClick(object sender, EventArgs e)
         {
             // Open original thread
             Process.Start("https://www.donationcoder.com/forum/index.php?topic=51939.0");
         }
 
-        void SourceCodeGithubcomToolStripMenuItemClick(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the source code githubcom tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnSourceCodeGithubcomToolStripMenuItemClick(object sender, EventArgs e)
         {
             // Open GitHub repository
             Process.Start("https://github.com/publicdomain/bggfetch/");
@@ -363,7 +352,12 @@ namespace BGGfetch
             this.TopMost = this.alwaysOnTopToolStripMenuItem.Checked;
         }
 
-        void DirectoryTextBoxDragDrop(object sender, DragEventArgs e)
+        /// <summary>
+        /// Handles the directory text box drag drop.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnDirectoryTextBoxDragDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -376,53 +370,33 @@ namespace BGGfetch
             }
         }
 
-        void DirectoryTextBoxDragEnter(object sender, DragEventArgs e)
+        /// <summary>
+        /// Handles the directory text box drag enter.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnDirectoryTextBoxDragEnter(object sender, DragEventArgs e)
         {
             e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
         }
 
-        void GameDataGridViewClick(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the game data grid view click.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnGameDataGridViewClick(object sender, EventArgs e)
         {
             try
             {
                 // Add to download list box
-                this.downloadListBox.Items.Add($"{this.gameDataGridView.SelectedRows[0].Cells[0].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[1].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[2].Value.ToString()}");
+                this.downloadList.Add($"{this.gameDataGridView.SelectedRows[0].Cells[0].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[1].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[2].Value.ToString()}");
             }
             catch
             {
                 // Let it fall through
                 ;
             }
-        }
-
-        /// <summary>
-        /// Handles the next game button click event.
-        /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
-        private void OnNextGameButtonClick(object sender, EventArgs e)
-        {
-            // Check fetched count
-            if (this.fetchedCount == this.gameList.Count)
-            {
-                // Advise user
-                MessageBox.Show("No more games to fetch.", "All fetched", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                // Halt flow
-                return;
-            }
-
-            // Reset
-            this.gameInfoTextBox.Clear();
-            this.gameImagePictureBox.Image = null;
-            this.dataTable = null;
-            this.gameDataGridView.DataSource = null;
-
-            // Add to download list box
-            this.downloadListBox.Items.Add($"search | {this.gameList[this.gameListIndex]}");
-
-            // Raise index
-            this.gameListIndex++;
         }
 
         /// <summary>
@@ -447,22 +421,29 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Ons the timer elapsed.
+        /// Handles the timer elapsed.
         /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
         public async void OnTimerElapsedAsync(object sender, ElapsedEventArgs e)
         {
-            // Basic checks
-            if (this.downloadListBox.Items.Count == 0)
-            {
-                goto exitAndRestart;
-            }
-
             // Diff check
             TimeSpan timeDiff = DateTime.Now - this.lastXmlApiDownloadDateTime;
 
-            if (timeDiff.TotalSeconds < 5)
+            // API seconds
+            if (timeDiff.TotalSeconds < 6)
+            {
+                this.ApiCountToolStripStatusLabel.Text = (5 - timeDiff.TotalSeconds).ToString();
+
+                goto exitAndRestart;
+            }
+            else
+            {
+                this.ApiCountToolStripStatusLabel.Text = "OK";
+            }
+
+            // Check there's something to work with
+            if (this.downloadList.Count == 0)
             {
                 goto exitAndRestart;
             }
@@ -474,7 +455,7 @@ namespace BGGfetch
 
             var xml = string.Empty;
 
-            var item = this.downloadListBox.Items[0].ToString().Split(new string[] { " | " }, StringSplitOptions.None);
+            var item = this.downloadList[0].Split(new string[] { " | " }, StringSplitOptions.None);
 
             var action = item[0];
 
@@ -647,17 +628,11 @@ namespace BGGfetch
                 }
             }
 
-            // Check iif all games have been processed
-            if (this.downloadListBox.Items.Count == 0 && this.gameListIndex == this.gameList.Count - 1)
-            {
-                this.resultToolStripStatusLabel.Text = "All games have been fetched.";
-
-            }
-
+            // Check for success
             if (success)
             {
                 // Remove from list box 
-                this.downloadListBox.Items.RemoveAt(0);
+                this.downloadList.RemoveAt(0);
 
                 // Set new datetime
                 this.lastXmlApiDownloadDateTime = DateTime.Now;
@@ -667,14 +642,18 @@ namespace BGGfetch
             fetchTimer.Start();
         }
 
-        void GameImagePictureBoxMouseMove(object sender, MouseEventArgs e)
+        /// <summary>
+        /// Handles the image picture box mouse move event.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
+        private void GameImagePictureBoxMouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
                 var files = new string[] { this.filePath };
 
                 this.gameImagePictureBox.DoDragDrop(new DataObject(DataFormats.FileDrop, files), DragDropEffects.Copy | DragDropEffects.Move);
-
             }
         }
 
@@ -722,12 +701,22 @@ namespace BGGfetch
             }
         }
 
-        void MainFormLoad(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the main form load.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnMainFormLoad(object sender, EventArgs e)
         {
-
+            // TODO Add code if needed.
         }
 
-        void MainFormFormClosing(object sender, FormClosingEventArgs e)
+        /// <summary>
+        /// Handles the main form form closing.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnMainFormFormClosing(object sender, FormClosingEventArgs e)
         {
             /* Setiings data values */
 
@@ -736,16 +725,66 @@ namespace BGGfetch
             this.settingsData.Location = this.Location;
             this.settingsData.Size = this.Size;
             this.settingsData.VerticalSplit = this.splitContainer.SplitterDistance;
-            this.settingsData.HorizontalSplit = this.splitContainer2.SplitterDistance;
+            this.settingsData.HorizontalSplit = this.splitContainer1.SplitterDistance;
 
             // Save settings data to disk
             this.SaveSettingsFile(this.settingsDataPath, this.settingsData);
         }
 
-        void ExitToolStripMenuItemClick(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the exit tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnExitToolStripMenuItemClick(object sender, EventArgs e)
         {
             // Close program        
             this.Close();
+        }
+
+        /// <summary>
+        /// Ons the fetch button click.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
+        private void OnFetchButtonClick(object sender, EventArgs e)
+        {
+            // Something to work with
+            if (this.gameTextBox.Text.Length == 0)
+            {
+                MessageBox.Show("Please enter a game to continue.", "Game", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                this.gameTextBox.Focus();
+
+                return;
+            }
+
+            // Valid directory
+            if (!Directory.Exists(this.directoryTextBox.Text))
+            {
+                MessageBox.Show("Target save directory must exist.", "Directory", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                this.directoryTextBox.Focus();
+
+                return;
+            }
+
+            // Set variables
+            this.gameList = new List<string>(this.gameTextBox.Lines);
+            this.gameListIndex = 0;
+            this.directory = this.directoryTextBox.Text;
+
+            // Reset
+            this.gameInfoTextBox.Clear();
+            this.gameImagePictureBox.Image = null;
+            this.dataTable = null;
+            this.gameDataGridView.DataSource = null;
+
+            // Add to download list box
+            this.downloadList.Add($"search | {this.gameTextBox.Text}");
+
+            // Advise user
+            this.resultToolStripStatusLabel.Text = "Preparing to search...";
         }
     }
 }
