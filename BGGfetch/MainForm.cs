@@ -384,8 +384,15 @@ namespace BGGfetch
         {
             try
             {
+                // Clear previous game info and image
+                this.gameInfoTextBox.Clear();
+                this.gameImagePictureBox.Image = null;
+
                 // Set download item
                 this.downloadItem = $"{this.gameDataGridView.Rows[e.RowIndex].Cells[0].Value.ToString()} | {this.gameDataGridView.Rows[e.RowIndex].Cells[1].Value.ToString()} | {this.gameDataGridView.Rows[e.RowIndex].Cells[2].Value.ToString()}";
+
+                // Start timer
+                this.fetchTimer.Start();
             }
             catch
             {
