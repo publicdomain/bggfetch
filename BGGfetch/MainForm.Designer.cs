@@ -129,7 +129,7 @@ namespace BGGfetch
         	this.newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
         	this.newToolStripMenuItem.Name = "newToolStripMenuItem";
         	this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-        	this.newToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+        	this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
         	this.newToolStripMenuItem.Text = "&New";
         	this.newToolStripMenuItem.Visible = false;
         	this.newToolStripMenuItem.Click += new System.EventHandler(this.OnNewToolStripMenuItemClick);
@@ -140,7 +140,7 @@ namespace BGGfetch
         	this.openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
         	this.openToolStripMenuItem.Name = "openToolStripMenuItem";
         	this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-        	this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+        	this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
         	this.openToolStripMenuItem.Text = "&Open";
         	this.openToolStripMenuItem.Visible = false;
         	this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItemClick);
@@ -148,7 +148,7 @@ namespace BGGfetch
         	// toolStripSeparator
         	// 
         	this.toolStripSeparator.Name = "toolStripSeparator";
-        	this.toolStripSeparator.Size = new System.Drawing.Size(143, 6);
+        	this.toolStripSeparator.Size = new System.Drawing.Size(149, 6);
         	this.toolStripSeparator.Visible = false;
         	// 
         	// saveToolStripMenuItem
@@ -157,19 +157,20 @@ namespace BGGfetch
         	this.saveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
         	this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
         	this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-        	this.saveToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+        	this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
         	this.saveToolStripMenuItem.Text = "&Save";
+        	this.saveToolStripMenuItem.Visible = false;
         	this.saveToolStripMenuItem.Click += new System.EventHandler(this.OnSaveToolStripMenuItemClick);
         	// 
         	// toolStripSeparator3
         	// 
         	this.toolStripSeparator3.Name = "toolStripSeparator3";
-        	this.toolStripSeparator3.Size = new System.Drawing.Size(143, 6);
+        	this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
         	// 
         	// exitToolStripMenuItem
         	// 
         	this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-        	this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+        	this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
         	this.exitToolStripMenuItem.Text = "E&xit";
         	this.exitToolStripMenuItem.Click += new System.EventHandler(this.OnExitToolStripMenuItemClick);
         	// 
@@ -185,7 +186,7 @@ namespace BGGfetch
         	// alwaysOnTopToolStripMenuItem
         	// 
         	this.alwaysOnTopToolStripMenuItem.Name = "alwaysOnTopToolStripMenuItem";
-        	this.alwaysOnTopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+        	this.alwaysOnTopToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
         	this.alwaysOnTopToolStripMenuItem.Text = "&Always on top";
         	// 
         	// helpToolStripMenuItem
@@ -382,6 +383,7 @@ namespace BGGfetch
         	this.gameDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
         	this.gameDataGridView.Size = new System.Drawing.Size(304, 135);
         	this.gameDataGridView.TabIndex = 2;
+        	this.gameDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnGameDataGridViewCellClick);
         	// 
         	// gameInfoTextBox
         	// 
@@ -495,6 +497,7 @@ namespace BGGfetch
         	this.browseButton.TabIndex = 2;
         	this.browseButton.Text = "&Browse";
         	this.browseButton.UseVisualStyleBackColor = true;
+        	this.browseButton.Click += new System.EventHandler(this.OnBrowseButtonClick);
         	// 
         	// directoryTextBox
         	// 

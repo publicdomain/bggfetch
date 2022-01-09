@@ -47,11 +47,6 @@ namespace BGGfetch
         private List<string> downloadList = new List<string>();
 
         /// <summary>
-        /// The index of the game list.
-        /// </summary>
-        private int gameListIndex = 0;
-
-        /// <summary>
         /// The directory.
         /// </summary>
         private string directory;
@@ -287,7 +282,7 @@ namespace BGGfetch
             var aboutForm = new AboutForm(
                 $"About {programTitle}",
                 $"{programTitle} {version.Major}.{version.Minor}.{version.Build}",
-                $"Made for: Mouser{Environment.NewLine}DonationCoder.com{Environment.NewLine}Day #008, Week #01 @ January 08, 2022",
+                $"Made for: Mouser{Environment.NewLine}DonationCoder.com{Environment.NewLine}Day #009, Week #01 @ January 09, 2022",
                 licenseText,
                 this.Icon.ToBitmap())
             {
@@ -381,16 +376,16 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the game data grid view click.
+        /// Handles the game data grid view cell click event.
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
-        private void OnGameDataGridViewClick(object sender, EventArgs e)
+        private void OnGameDataGridViewCellClick(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
                 // Add to download list box
-                this.downloadList.Add($"{this.gameDataGridView.SelectedRows[0].Cells[0].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[1].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[2].Value.ToString()}");
+                this.downloadList.Add($"{this.gameDataGridView.Rows[e.RowIndex].Cells[0].Value.ToString()} | {this.gameDataGridView.Rows[e.RowIndex].Cells[1].Value.ToString()} | {this.gameDataGridView.Rows[e.RowIndex].Cells[2].Value.ToString()}");
             }
             catch
             {
@@ -433,7 +428,7 @@ namespace BGGfetch
             // API seconds
             if (timeDiff.TotalSeconds < 6)
             {
-                this.ApiCountToolStripStatusLabel.Text = (5 - timeDiff.TotalSeconds).ToString();
+                this.ApiCountToolStripStatusLabel.Text = timeDiff.TotalSeconds.ToString();
 
                 goto exitAndRestart;
             }
@@ -570,6 +565,7 @@ namespace BGGfetch
 
                     doc.LoadHtml(xml);
 
+
                     // TODO Desription [Node detection/handling can be improved]
 
                     try
@@ -606,6 +602,9 @@ namespace BGGfetch
 
                     if (imageUri != null)
                     {
+                        // Advise user
+                        this.resultToolStripStatusLabel.Text = $"Fetching image for \"{title}\"...";
+
                         await webClient.DownloadFileTaskAsync(imageUri, this.filePath);
 
                         if (File.Exists(this.filePath))
@@ -616,7 +615,7 @@ namespace BGGfetch
                     }
 
                     // Advise user
-                    this.resultToolStripStatusLabel.Text = $"Downloaded game info for \"{title}\"...";
+                    this.resultToolStripStatusLabel.Text = $"Downloaded info and image for \"{title}\"...";
 
                     // Set flag
                     success = true;
@@ -732,18 +731,7 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the exit tool strip menu item click.
-        /// </summary>
-        /// <param name="sender">Sender object.</param>
-        /// <param name="e">Event arguments.</param>
-        private void OnExitToolStripMenuItemClick(object sender, EventArgs e)
-        {
-            // Close program        
-            this.Close();
-        }
-
-        /// <summary>
-        /// Ons the fetch button click.
+        /// Handles the fetch button click.
         /// </summary>
         /// <param name="sender">Sender.</param>
         /// <param name="e">E.</param>
@@ -771,7 +759,6 @@ namespace BGGfetch
 
             // Set variables
             this.gameList = new List<string>(this.gameTextBox.Lines);
-            this.gameListIndex = 0;
             this.directory = this.directoryTextBox.Text;
 
             // Reset
@@ -784,7 +771,18 @@ namespace BGGfetch
             this.downloadList.Add($"search | {this.gameTextBox.Text}");
 
             // Advise user
-            this.resultToolStripStatusLabel.Text = "Preparing to search...";
+            this.resultToolStripStatusLabel.Text = $"Preparing to search \"{this.gameTextBox.Text}\"...";
+        }
+
+        /// <summary>
+        /// Handles the exit tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnExitToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            // Close program        
+            this.Close();
         }
     }
 }
