@@ -428,7 +428,7 @@ namespace BGGfetch
             // API seconds
             if (timeDiff.TotalSeconds < 6)
             {
-                this.ApiCountToolStripStatusLabel.Text = timeDiff.TotalSeconds.ToString();
+                this.ApiCountToolStripStatusLabel.Text = Math.Truncate(timeDiff.TotalSeconds).ToString();
 
                 goto exitAndRestart;
             }
