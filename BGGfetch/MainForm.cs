@@ -42,9 +42,9 @@ namespace BGGfetch
         private List<string> gameList;
 
         /// <summary>
-        /// The download list.
+        /// The download item.
         /// </summary>
-        private List<string> downloadList = new List<string>();
+        private string downloadItem = string.Empty;
 
         /// <summary>
         /// The directory.
@@ -384,8 +384,8 @@ namespace BGGfetch
         {
             try
             {
-                // Add to download list box
-                this.downloadList.Add($"{this.gameDataGridView.Rows[e.RowIndex].Cells[0].Value.ToString()} | {this.gameDataGridView.Rows[e.RowIndex].Cells[1].Value.ToString()} | {this.gameDataGridView.Rows[e.RowIndex].Cells[2].Value.ToString()}");
+                // Set download item
+                this.downloadItem = $"{this.gameDataGridView.Rows[e.RowIndex].Cells[0].Value.ToString()} | {this.gameDataGridView.Rows[e.RowIndex].Cells[1].Value.ToString()} | {this.gameDataGridView.Rows[e.RowIndex].Cells[2].Value.ToString()}";
             }
             catch
             {
@@ -438,7 +438,7 @@ namespace BGGfetch
             }
 
             // Check there's something to work with
-            if (this.downloadList.Count == 0)
+            if (this.downloadItem.Length == 0)
             {
                 goto exitAndRestart;
             }
@@ -450,7 +450,7 @@ namespace BGGfetch
 
             var xml = string.Empty;
 
-            var item = this.downloadList[0].Split(new string[] { " | " }, StringSplitOptions.None);
+            var item = this.downloadItem.Split(new string[] { " | " }, StringSplitOptions.None);
 
             var action = item[0];
 
@@ -605,8 +605,13 @@ namespace BGGfetch
                         // Advise user
                         this.resultToolStripStatusLabel.Text = $"Fetching image for \"{title}\"...";
 
-                        await webClient.DownloadFileTaskAsync(imageUri, this.filePath);
+                        // TODO can be deleted instead
+                        if (!File.Exists(this.filePath))
+                        {
+                            await webClient.DownloadFileTaskAsync(imageUri, this.filePath);
+                        }
 
+                        // TODO can be refactored
                         if (File.Exists(this.filePath))
                         {
                             // Load picture
@@ -630,8 +635,8 @@ namespace BGGfetch
             // Check for success
             if (success)
             {
-                // Remove from list box 
-                this.downloadList.RemoveAt(0);
+                // Clear download item
+                this.downloadItem = string.Empty;
 
                 // Set new datetime
                 this.lastXmlApiDownloadDateTime = DateTime.Now;
@@ -768,10 +773,13 @@ namespace BGGfetch
             this.gameDataGridView.DataSource = null;
 
             // Add to download list box
-            this.downloadList.Add($"search | {this.gameTextBox.Text}");
+            this.downloadItem = $"search | {this.gameTextBox.Text}";
 
             // Advise user
             this.resultToolStripStatusLabel.Text = $"Preparing to search \"{this.gameTextBox.Text}\"...";
+
+            // Start timer
+            fetchTimer.Start();
         }
 
         /// <summary>
