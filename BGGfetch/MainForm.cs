@@ -78,6 +78,11 @@ namespace BGGfetch
         private string settingsDataPath = $"{Application.ProductName}-SettingsData.txt";
 
         /// <summary>
+        /// The description prepend.
+        /// </summary>
+        private string descriptionPrepend = string.Empty;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="T:BGGfetch.MainForm"/> class.
         /// </summary>
         public MainForm()
@@ -478,8 +483,8 @@ namespace BGGfetch
                     };
 
                     // Download xml for game id
-                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}"));
-                    //# xml = File.ReadAllText("search.xml");
+                    //# xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}"));
+                    xml = File.ReadAllText("search.xml");
 
                     // Prepare data table
                     this.dataTable = new DataTable();
@@ -508,6 +513,9 @@ namespace BGGfetch
                         try
                         {
                             dataRow[1] = game.ChildNodes["yearpublished"].InnerText;
+
+                            // Prepend year
+                            this.descriptionPrepend = $" ({game.ChildNodes["yearpublished"].InnerText})";
                         }
                         catch (Exception ex)
                         {
@@ -518,6 +526,10 @@ namespace BGGfetch
 
                         // Add to data table 
                         this.dataTable.Rows.Add(dataRow);
+
+                        // Prepend to description
+                        this.descriptionPrepend = $"{dataRow[2].ToString().ToUpperInvariant()}{this.descriptionPrepend}{Environment.NewLine}{Environment.NewLine}";
+
                     }
 
                     // TODO)DO Update data grid view [Check clear & refreshing]
@@ -573,8 +585,8 @@ namespace BGGfetch
                     };
 
                     // Download xml for game id
-                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
-                    //# xml = File.ReadAllText("1406.xml");
+                    //# xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
+                    xml = File.ReadAllText("1406.xml");
 
                     // Set new datetime
                     this.lastXmlApiDownloadDateTime = DateTime.Now;
@@ -594,7 +606,8 @@ namespace BGGfetch
 
                         description = description.Replace("<br/>", Environment.NewLine).Replace("&amp;", "&").Replace("&lt;", "<").Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&apos;", "'");
 
-                        this.gameInfoRichTextBox.Text = description;
+                        // Set description
+                        this.gameInfoRichTextBox.Text = this.descriptionPrepend + description;
                     }
                     catch (Exception ex)
                     {
