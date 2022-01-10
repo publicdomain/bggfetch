@@ -522,10 +522,20 @@ namespace BGGfetch
 
                     // TODO)DO Update data grid view [Check clear & refreshing]
                     this.gameDataGridView.DataSource = null;
-                    this.gameDataGridView.DataSource = this.dataTable;
+
+                    // Sorting
+                    this.gameDataGridView.DataSource = this.dataTable.DefaultView;
+                    foreach (DataGridViewColumn column in this.gameDataGridView.Columns)
+                    {
+                        column.SortMode = DataGridViewColumnSortMode.Automatic;
+                    }
+
+                    // Resize columns
                     this.gameDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
                     this.gameDataGridView.AutoResizeColumns();
                     this.gameDataGridView.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+                    // Refresh/reset
                     this.gameDataGridView.Refresh();
                     this.gameDataGridView.ClearSelection();
                     this.gameDataGridView.CurrentCell = null;
