@@ -64,7 +64,7 @@ namespace BGGfetch
         	this.splitContainer = new System.Windows.Forms.SplitContainer();
         	this.splitContainer1 = new System.Windows.Forms.SplitContainer();
         	this.gameDataGridView = new System.Windows.Forms.DataGridView();
-        	this.gameInfoTextBox = new System.Windows.Forms.TextBox();
+        	this.gameInfoRichTextBox = new System.Windows.Forms.RichTextBox();
         	this.gameImagePictureBox = new System.Windows.Forms.PictureBox();
         	this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
         	this.gamesLabel = new System.Windows.Forms.Label();
@@ -129,7 +129,7 @@ namespace BGGfetch
         	this.newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
         	this.newToolStripMenuItem.Name = "newToolStripMenuItem";
         	this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-        	this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+        	this.newToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
         	this.newToolStripMenuItem.Text = "&New";
         	this.newToolStripMenuItem.Click += new System.EventHandler(this.OnNewToolStripMenuItemClick);
         	// 
@@ -139,7 +139,7 @@ namespace BGGfetch
         	this.openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
         	this.openToolStripMenuItem.Name = "openToolStripMenuItem";
         	this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-        	this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+        	this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
         	this.openToolStripMenuItem.Text = "&Open";
         	this.openToolStripMenuItem.Visible = false;
         	this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItemClick);
@@ -147,7 +147,7 @@ namespace BGGfetch
         	// toolStripSeparator
         	// 
         	this.toolStripSeparator.Name = "toolStripSeparator";
-        	this.toolStripSeparator.Size = new System.Drawing.Size(149, 6);
+        	this.toolStripSeparator.Size = new System.Drawing.Size(143, 6);
         	this.toolStripSeparator.Visible = false;
         	// 
         	// saveToolStripMenuItem
@@ -156,7 +156,7 @@ namespace BGGfetch
         	this.saveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
         	this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
         	this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-        	this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+        	this.saveToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
         	this.saveToolStripMenuItem.Text = "&Save";
         	this.saveToolStripMenuItem.Visible = false;
         	this.saveToolStripMenuItem.Click += new System.EventHandler(this.OnSaveToolStripMenuItemClick);
@@ -164,12 +164,12 @@ namespace BGGfetch
         	// toolStripSeparator3
         	// 
         	this.toolStripSeparator3.Name = "toolStripSeparator3";
-        	this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+        	this.toolStripSeparator3.Size = new System.Drawing.Size(143, 6);
         	// 
         	// exitToolStripMenuItem
         	// 
         	this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-        	this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+        	this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
         	this.exitToolStripMenuItem.Text = "E&xit";
         	this.exitToolStripMenuItem.Click += new System.EventHandler(this.OnExitToolStripMenuItemClick);
         	// 
@@ -359,7 +359,7 @@ namespace BGGfetch
         	// 
         	// splitContainer1.Panel2
         	// 
-        	this.splitContainer1.Panel2.Controls.Add(this.gameInfoTextBox);
+        	this.splitContainer1.Panel2.Controls.Add(this.gameInfoRichTextBox);
         	this.splitContainer1.Size = new System.Drawing.Size(304, 250);
         	this.splitContainer1.SplitterDistance = 135;
         	this.splitContainer1.SplitterWidth = 6;
@@ -384,15 +384,14 @@ namespace BGGfetch
         	this.gameDataGridView.TabIndex = 2;
         	this.gameDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnGameDataGridViewCellClick);
         	// 
-        	// gameInfoTextBox
+        	// gameInfoRichTextBox
         	// 
-        	this.gameInfoTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.gameInfoTextBox.Location = new System.Drawing.Point(0, 0);
-        	this.gameInfoTextBox.Multiline = true;
-        	this.gameInfoTextBox.Name = "gameInfoTextBox";
-        	this.gameInfoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-        	this.gameInfoTextBox.Size = new System.Drawing.Size(304, 109);
-        	this.gameInfoTextBox.TabIndex = 5;
+        	this.gameInfoRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.gameInfoRichTextBox.Location = new System.Drawing.Point(0, 0);
+        	this.gameInfoRichTextBox.Name = "gameInfoRichTextBox";
+        	this.gameInfoRichTextBox.Size = new System.Drawing.Size(304, 109);
+        	this.gameInfoRichTextBox.TabIndex = 3;
+        	this.gameInfoRichTextBox.Text = "";
         	// 
         	// gameImagePictureBox
         	// 
@@ -468,7 +467,6 @@ namespace BGGfetch
         	this.gameTextBox.Name = "gameTextBox";
         	this.gameTextBox.Size = new System.Drawing.Size(572, 24);
         	this.gameTextBox.TabIndex = 0;
-        	this.gameTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
         	// 
         	// tableLayoutPanel3
         	// 
@@ -534,7 +532,6 @@ namespace BGGfetch
         	this.splitContainer.ResumeLayout(false);
         	this.splitContainer1.Panel1.ResumeLayout(false);
         	this.splitContainer1.Panel2.ResumeLayout(false);
-        	this.splitContainer1.Panel2.PerformLayout();
         	((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
         	this.splitContainer1.ResumeLayout(false);
         	((System.ComponentModel.ISupportInitialize)(this.gameDataGridView)).EndInit();
@@ -546,7 +543,7 @@ namespace BGGfetch
         	this.ResumeLayout(false);
         	this.PerformLayout();
         }
-        private System.Windows.Forms.TextBox gameInfoTextBox;
+        private System.Windows.Forms.RichTextBox gameInfoRichTextBox;
         private System.Windows.Forms.DataGridView gameDataGridView;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;

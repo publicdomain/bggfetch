@@ -172,7 +172,7 @@ namespace BGGfetch
 
             this.dataTable = null;
             this.gameDataGridView.DataSource = null;
-            this.gameInfoTextBox.Clear();
+            this.gameInfoRichTextBox.Clear();
             this.gameImagePictureBox.Image = null;
 
             this.gameTextBox.Focus();
@@ -385,7 +385,7 @@ namespace BGGfetch
             try
             {
                 // Clear previous game info and image
-                this.gameInfoTextBox.Clear();
+                this.gameInfoRichTextBox.Clear();
                 this.gameImagePictureBox.Image = null;
 
                 // Set download item
@@ -525,6 +525,7 @@ namespace BGGfetch
                     this.gameDataGridView.DataSource = this.dataTable;
                     this.gameDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
                     this.gameDataGridView.AutoResizeColumns();
+                    this.gameDataGridView.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                     this.gameDataGridView.Refresh();
                     this.gameDataGridView.ClearSelection();
                     this.gameDataGridView.CurrentCell = null;
@@ -583,11 +584,11 @@ namespace BGGfetch
 
                         description = description.Replace("<br/>", Environment.NewLine).Replace("&amp;", "&").Replace("&lt;", "<").Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&apos;", "'");
 
-                        this.gameInfoTextBox.Text = description;
+                        this.gameInfoRichTextBox.Text = description;
                     }
                     catch (Exception ex)
                     {
-                        this.gameInfoTextBox.Text = "Description is not present.";
+                        this.gameInfoRichTextBox.Text = "Description is not present.";
                     }
 
                     // TODO Image [Node detection/handling can be improved]
@@ -774,7 +775,7 @@ namespace BGGfetch
             this.directory = this.directoryTextBox.Text;
 
             // Reset
-            this.gameInfoTextBox.Clear();
+            this.gameInfoRichTextBox.Clear();
             this.gameImagePictureBox.Image = null;
             this.dataTable = null;
             this.gameDataGridView.DataSource = null;
