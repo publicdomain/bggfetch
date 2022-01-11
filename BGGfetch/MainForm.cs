@@ -479,12 +479,12 @@ namespace BGGfetch
 
                     WebClient webClient = new WebClient
                     {
-                        Proxy = null
+
                     };
 
                     // Download xml for game id
-                    //# xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}"));
-                    xml = File.ReadAllText("search.xml");
+                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}"));
+                    //# xml = File.ReadAllText("search.xml");
 
                     // Prepare data table
                     this.dataTable = new DataTable();
@@ -528,7 +528,7 @@ namespace BGGfetch
                         this.dataTable.Rows.Add(dataRow);
 
                         // Prepend to description
-                        this.descriptionPrepend = $"{dataRow[2].ToString().ToUpperInvariant()}{this.descriptionPrepend}{Environment.NewLine}{Environment.NewLine}";
+                        this.descriptionPrepend = $"{dataRow[2].ToString().ToUpperInvariant()}{this.descriptionPrepend}{Environment.NewLine}https://boardgamegeek.com/boardgame/{dataRow[0].ToString()}/{Environment.NewLine + Environment.NewLine}";
 
                     }
 
@@ -585,8 +585,8 @@ namespace BGGfetch
                     };
 
                     // Download xml for game id
-                    //# xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
-                    xml = File.ReadAllText("1406.xml");
+                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
+                    //# xml = File.ReadAllText("1406.xml");
 
                     // Set new datetime
                     this.lastXmlApiDownloadDateTime = DateTime.Now;
@@ -598,6 +598,37 @@ namespace BGGfetch
 
                     // TODO Desription [Node detection/handling can be improved]
 
+                    // Prepend designers
+                    var boardgamedesigners = doc.DocumentNode.SelectNodes("//boardgamedesigner");
+
+                    List<string> boardgamedesignerList = new List<string>();
+
+                    if (boardgamedesigners.Any())
+                    {
+                        foreach (var designer in boardgamedesigners)
+                        {
+                            boardgamedesignerList.Add(designer.InnerText);
+                        }
+
+                        this.descriptionPrepend += $"Designer{(boardgamedesignerList.Count > 1 ? "s" : string.Empty)}:{Environment.NewLine}{string.Join(Environment.NewLine, boardgamedesignerList)}";
+                    }
+
+                    // Prepend mechanics
+                    var boardgamemechanics = doc.DocumentNode.SelectNodes("//boardgamemechanic");
+
+                    List<string> boardgamemechanicList = new List<string>();
+
+                    if (boardgamemechanics.Any())
+                    {
+                        foreach (var mechanic in boardgamemechanics)
+                        {
+                            boardgamemechanicList.Add(mechanic.InnerText);
+                        }
+
+                        this.descriptionPrepend += $"{(boardgamedesignerList.Count > 0 ? Environment.NewLine + Environment.NewLine : string.Empty)}Mechanic{(boardgamemechanicList.Count > 1 ? "s" : string.Empty)}:{Environment.NewLine}{string.Join(Environment.NewLine, boardgamemechanicList)}";
+                    }
+
+                    // Description 
                     try
                     {
                         var desriptionNode = doc.DocumentNode.SelectSingleNode("//description");
@@ -613,6 +644,9 @@ namespace BGGfetch
                     {
                         this.gameInfoRichTextBox.Text = "Description is not present.";
                     }
+
+                    // Reset prepend description variable
+                    this.descriptionPrepend = string.Empty;
 
                     // TODO Image [Node detection/handling can be improved]
 
