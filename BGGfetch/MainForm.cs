@@ -479,7 +479,7 @@ namespace BGGfetch
 
                     WebClient webClient = new WebClient
                     {
-
+                        Proxy = null
                     };
 
                     // Download xml for game id
