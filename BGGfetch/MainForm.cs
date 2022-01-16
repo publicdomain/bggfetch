@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -47,6 +48,16 @@ namespace BGGfetch
         private string downloadItem = string.Empty;
 
         /// <summary>
+        /// The xml web client.
+        /// </summary>
+        private WebClient xmlWebClient = new WebClient();
+
+        /// <summary>
+        /// The image web client.
+        /// </summary>
+        private WebClient imageWebClient = new WebClient();
+
+        /// <summary>
         /// The directory.
         /// </summary>
         private string directory;
@@ -83,6 +94,21 @@ namespace BGGfetch
         private string descriptionPrepend = string.Empty;
 
         /// <summary>
+        /// The target URI.
+        /// </summary>
+        private Uri targetUri = null;
+
+        /// <summary>
+        /// The image URI.
+        /// </summary>
+        private Uri imageUri = null;
+
+        /// <summary>
+        /// The fetched image path.
+        /// </summary>
+        private string fetchedImagePath = string.Empty;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="T:BGGfetch.MainForm"/> class.
         /// </summary>
         public MainForm()
@@ -101,7 +127,6 @@ namespace BGGfetch
             // SSL fix
             System.Net.ServicePointManager.Expect100Continue = true;
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
-
 
             /* Settings data */
 
@@ -136,6 +161,14 @@ namespace BGGfetch
                 this.splitContainer.SplitterDistance = this.settingsData.VerticalSplit;
                 this.splitContainer1.SplitterDistance = this.settingsData.HorizontalSplit;
             }
+
+            /* WebClients */
+
+            this.xmlWebClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnDownloadStringCompleted);
+            this.xmlWebClient.Proxy = null;
+
+            this.imageWebClient.DownloadFileCompleted += new AsyncCompletedEventHandler(OnDownloadFileCompleted);
+            this.imageWebClient.Proxy = null;
 
             /* Timer  */
 
@@ -432,7 +465,7 @@ namespace BGGfetch
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
-        public async void OnTimerElapsedAsync(object sender, ElapsedEventArgs e)
+        public void OnTimerElapsedAsync(object sender, ElapsedEventArgs e)
         {
             // Diff check
             TimeSpan timeDiff = DateTime.Now - this.lastXmlApiDownloadDateTime;
@@ -449,14 +482,17 @@ namespace BGGfetch
                 this.ApiCountToolStripStatusLabel.Text = "OK";
             }
 
+            // Skip if webclient is busy
+            if (this.xmlWebClient.IsBusy)
+            {
+                goto exitAndRestart;
+            }
+
             // Check there's something to work with
             if (this.downloadItem.Length == 0)
             {
                 goto exitAndRestart;
             }
-
-            // Set success flag
-            bool success = false;
 
             /* Search or fetch game info */
 
@@ -477,15 +513,66 @@ namespace BGGfetch
 
                     this.resultToolStripStatusLabel.Text = $"Searching for: \"{title}\"...";
 
-                    WebClient webClient = new WebClient
-                    {
-                        Proxy = null
-                    };
+                    // Set target uri
+                    this.targetUri = new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}");
 
                     // Download xml for game id
-                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}"));
-                    //# xml = File.ReadAllText("search.xml");
+                    this.xmlWebClient.DownloadStringAsync(this.targetUri);
+                }
+                catch (Exception ex)
+                {
+                    // Log to file
+                    File.AppendAllText("BGGfetch-log.txt", $"{Environment.NewLine}{Environment.NewLine}Game search XML exception message:{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                }
+            }
+            else
+            {
+                /* Download image */
 
+                try
+                {
+                    var id = item[0];
+                    var title = $"{item[2]}-{item[1]}";
+
+                    this.resultToolStripStatusLabel.Text = $"Downloading game info: \"{title}\"...";
+
+                    // Set target uri
+                    this.targetUri = new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}");
+
+                    // Download xml for game id
+                    this.xmlWebClient.DownloadStringAsync(this.targetUri);
+
+                }
+                catch (Exception ex)
+                {
+                    // Log to file
+                    File.AppendAllText("BGGfetch-log.txt", $"{Environment.NewLine}{Environment.NewLine}Image XML exception message:{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.Message}");
+                }
+            }
+
+        exitAndRestart:
+            fetchTimer.Start();
+        }
+
+        /// <summary>
+        /// Handles the download string completed event.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
+        private void OnDownloadStringCompleted(Object sender, DownloadStringCompletedEventArgs e)
+        {
+            // Check for cancel or error
+            if (!e.Cancelled && e.Error == null)
+            {
+                // Declare success flag
+                bool success = false;
+
+                // Set XML contents
+                string xml = (string)e.Result;
+
+                // Check for search
+                if (this.targetUri.ToString().Contains("search"))
+                {
                     // Prepare data table
                     this.dataTable = new DataTable();
 
@@ -562,31 +649,11 @@ namespace BGGfetch
                     // Set flag
                     success = true;
                 }
-                catch (Exception ex)
+                else
                 {
-                    // Log to file
-                    File.AppendAllText("BGGfetch-log.txt", $"{Environment.NewLine}{Environment.NewLine}Game search:{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
-                }
-            }
-            else
-            {
-                /* Download image */
-
-                try
-                {
-                    var id = item[0];
+                    // TODO Set title [Can be set on timer elapsed]
+                    var item = this.downloadItem.Split(new string[] { " | " }, StringSplitOptions.None);
                     var title = $"{item[2]}-{item[1]}";
-
-                    this.resultToolStripStatusLabel.Text = $"Downloading game info: \"{title}\"...";
-
-                    WebClient webClient = new WebClient
-                    {
-                        Proxy = null
-                    };
-
-                    // Download xml for game id
-                    xml = await webClient.DownloadStringTaskAsync(new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}"));
-                    //# xml = File.ReadAllText("1406.xml");
 
                     // Set new datetime
                     this.lastXmlApiDownloadDateTime = DateTime.Now;
@@ -594,7 +661,6 @@ namespace BGGfetch
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
 
                     doc.LoadHtml(xml);
-
 
                     // TODO Desription [Node detection/handling can be improved]
 
@@ -650,13 +716,13 @@ namespace BGGfetch
 
                     // TODO Image [Node detection/handling can be improved]
 
-                    Uri imageUri = null;
+                    this.imageUri = null;
 
                     try
                     {
                         var image = doc.DocumentNode.SelectSingleNode("//image");
 
-                        imageUri = new Uri(image.InnerHtml);
+                        this.imageUri = new Uri(image.InnerHtml);
 
                         this.filePath = Path.Combine(this.directory, this.GetValidDirectoryName($"{title}_{Path.GetFileName(image.InnerHtml)}"));
                     }
@@ -665,23 +731,23 @@ namespace BGGfetch
                         // TODO Image not present [Advise user or log]
                     }
 
-                    if (imageUri != null)
+                    if (this.imageUri != null)
                     {
-                        // Advise user
-                        this.resultToolStripStatusLabel.Text = $"Fetching image for \"{title}\"...";
-
-                        // TODO can be deleted instead
-                        if (!File.Exists(this.filePath))
-                        {
-                            await webClient.DownloadFileTaskAsync(imageUri, this.filePath);
-                        }
-
-                        // TODO can be refactored
+                        // Load previous if it exists
                         if (File.Exists(this.filePath))
                         {
                             // Load picture
                             this.gameImagePictureBox.Image = Image.FromFile(this.filePath);
                         }
+                        else
+                        {
+                            // Advise user
+                            this.resultToolStripStatusLabel.Text = $"Fetching image for \"{title}\"...";
+
+                            // Download image
+                            this.imageWebClient.DownloadFileAsync(this.imageUri, this.filePath);
+                        }
+
                     }
 
                     // Advise user
@@ -690,25 +756,46 @@ namespace BGGfetch
                     // Set flag
                     success = true;
                 }
-                catch (Exception ex)
+
+                // Check for success
+                if (success)
                 {
-                    // Log to file
-                    File.AppendAllText("BGGfetch-log.txt", $"{Environment.NewLine}{Environment.NewLine}Download info:{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.Message}");
+                    // Clear download item
+                    this.downloadItem = string.Empty;
+
+                    // Null target uri
+                    this.targetUri = null;
+
+                    // Set new datetime
+                    this.lastXmlApiDownloadDateTime = DateTime.Now;
                 }
             }
+        }
 
-            // Check for success
-            if (success)
+        /// <summary>
+        /// Ons the download file completed.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">E.</param>
+        private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            // Check for cancel or error
+            /*if (!e.Cancelled && e.Error == null)
             {
-                // Clear download item
-                this.downloadItem = string.Empty;
+                            
+            }*/
 
-                // Set new datetime
-                this.lastXmlApiDownloadDateTime = DateTime.Now;
+            // Try to load
+            if (File.Exists(this.filePath))
+            {
+                // Load picture
+                this.gameImagePictureBox.Image = Image.FromFile(this.filePath);
             }
-
-        exitAndRestart:
-            fetchTimer.Start();
+            else
+            {
+                // Download image (Retry)
+                this.imageWebClient.DownloadFileAsync(this.imageUri, this.filePath);
+            }
         }
 
         /// <summary>
