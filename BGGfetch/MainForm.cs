@@ -320,7 +320,7 @@ namespace BGGfetch
             var aboutForm = new AboutForm(
                 $"About {programTitle}",
                 $"{programTitle} {version.Major}.{version.Minor}.{version.Build}",
-                $"Made for: Mouser{Environment.NewLine}DonationCoder.com{Environment.NewLine}Day #9, Week #01 @ January 09, 2022",
+                $"Made for: Mouser{Environment.NewLine}DonationCoder.com{Environment.NewLine}Day #16, Week #02 @ January 16, 2022",
                 licenseText,
                 this.Icon.ToBitmap())
             {
