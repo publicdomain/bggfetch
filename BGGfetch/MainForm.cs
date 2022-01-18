@@ -967,7 +967,8 @@ namespace BGGfetch
         /// <param name="e">Event arguments.</param>
         private void OnGameInfoNextButtonClick(object sender, EventArgs e)
         {
-            // TODO Add code
+            // Select next tab
+            this.mainTabControl.SelectTab(this.searchXmlTabPage);
         }
 
         /// <summary>
