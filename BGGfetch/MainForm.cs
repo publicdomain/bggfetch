@@ -957,7 +957,8 @@ namespace BGGfetch
         /// <param name="e">Event arguments.</param>
         private void OnGameInfoPrevButtonClick(object sender, EventArgs e)
         {
-            // TODO Add code
+            // Select previous tab
+            this.mainTabControl.SelectTab(this.searchTabPage);
         }
 
         /// <summary>
