@@ -757,8 +757,8 @@ namespace BGGfetch
                     // Advise user
                     this.resultToolStripStatusLabel.Text = $"Downloaded info and image for \"{title}\"...";
 
-                    // Focus tab
-                    this.mainTabControl.SelectedIndex = 1;
+                    // Focus game info tab
+                    this.mainTabControl.SelectTab(this.gameInfoTabPage);
 
                     // Set flag
                     success = true;
@@ -946,7 +946,8 @@ namespace BGGfetch
         /// <param name="e">Event arguments.</param>
         private void OnSearchTabButtonClick(object sender, EventArgs e)
         {
-            // TODO Add code
+            // Select next tab
+            this.mainTabControl.SelectTab(this.gameInfoTabPage);
         }
 
         /// <summary>
