@@ -158,8 +158,6 @@ namespace BGGfetch
                 this.directoryTextBox.Text = this.settingsData.Directory;
                 this.Location = this.settingsData.Location;
                 this.Size = this.settingsData.Size;
-                this.splitContainer.SplitterDistance = this.settingsData.VerticalSplit;
-                this.splitContainer1.SplitterDistance = this.settingsData.HorizontalSplit;
             }
 
             /* WebClients */
@@ -180,7 +178,7 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the browse button click.
+        /// Handles the browse button click event.
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
@@ -195,7 +193,7 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the new tool strip menu item click.
+        /// Handles the new tool strip menu item click event.
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
@@ -252,7 +250,7 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the save tool strip menu item click.
+        /// Handles the save tool strip menu item click event.
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
@@ -277,7 +275,7 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the about tool strip menu item click.
+        /// Handles the about tool strip menu item click event.
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
@@ -336,7 +334,7 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the free releases public domain is tool strip menu item click.
+        /// Handles the free releases public domain is tool strip menu item click event.
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
@@ -347,7 +345,7 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the original thread donation codercom tool strip menu item click.
+        /// Handles the original thread donation codercom tool strip menu item click event.
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
@@ -358,7 +356,7 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the source code githubcom tool strip menu item click.
+        /// Handles the source code githubcom tool strip menu item click event.
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
@@ -424,10 +422,11 @@ namespace BGGfetch
             {
                 // Clear previous game info and image
                 this.gameInfoRichTextBox.Clear();
+                this.xmlGameResultTextBox.Clear();
                 this.gameImagePictureBox.Image = null;
 
-                // Set download item
-                this.downloadItem = $"{this.gameDataGridView.Rows[e.RowIndex].Cells[0].Value.ToString()} | {this.gameDataGridView.Rows[e.RowIndex].Cells[1].Value.ToString()} | {this.gameDataGridView.Rows[e.RowIndex].Cells[2].Value.ToString()}";
+                // TODO Set download item [Can be refactored for e.RowIndex]
+                this.downloadItem = $"{this.gameDataGridView.SelectedRows[0].Cells[0].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[1].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[2].Value.ToString()}";
 
                 // Start timer
                 this.fetchTimer.Start();
@@ -557,12 +556,12 @@ namespace BGGfetch
         /// <summary>
         /// Handles the download string completed event.
         /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
         private void OnDownloadStringCompleted(Object sender, DownloadStringCompletedEventArgs e)
         {
             // Check for cancel or error
-            if (!e.Cancelled && e.Error == null)
+            if (!e.Cancelled && e.Error == null && this.targetUri != null)
             {
                 // Declare success flag
                 bool success = false;
@@ -645,6 +644,9 @@ namespace BGGfetch
                     // Update fetched count
                     this.fetchedCount++;
                     this.fetchedCountToolStripStatusLabel.Text = this.fetchedCount.ToString();
+
+                    // Populate search xml text box
+                    this.xmlSearchTextBox.Text = xml;
 
                     // Set flag
                     success = true;
@@ -747,11 +749,16 @@ namespace BGGfetch
                             // Download image
                             this.imageWebClient.DownloadFileAsync(this.imageUri, this.filePath);
                         }
-
                     }
+
+                    // Populate game result xml text box
+                    this.xmlGameResultTextBox.Text = xml;
 
                     // Advise user
                     this.resultToolStripStatusLabel.Text = $"Downloaded info and image for \"{title}\"...";
+
+                    // Focus tab
+                    this.mainTabControl.SelectedIndex = 1;
 
                     // Set flag
                     success = true;
@@ -773,10 +780,10 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Ons the download file completed.
+        /// Handles the download file completed.
         /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
         private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             // Check for cancel or error
@@ -801,8 +808,8 @@ namespace BGGfetch
         /// <summary>
         /// Handles the image picture box mouse move event.
         /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
         private void GameImagePictureBoxMouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -880,18 +887,16 @@ namespace BGGfetch
             this.settingsData.Directory = this.directoryTextBox.Text;
             this.settingsData.Location = this.Location;
             this.settingsData.Size = this.Size;
-            this.settingsData.VerticalSplit = this.splitContainer.SplitterDistance;
-            this.settingsData.HorizontalSplit = this.splitContainer1.SplitterDistance;
 
             // Save settings data to disk
             this.SaveSettingsFile(this.settingsDataPath, this.settingsData);
         }
 
         /// <summary>
-        /// Handles the fetch button click.
+        /// Handles the fetch button click event.
         /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">E.</param>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
         private void OnFetchButtonClick(object sender, EventArgs e)
         {
             // Something to work with
@@ -935,7 +940,47 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the exit tool strip menu item click.
+        /// Handles the search tab button click event.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnSearchTabButtonClick(object sender, EventArgs e)
+        {
+            // TODO Add code
+        }
+
+        /// <summary>
+        /// Handles the game info previous button click event.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnGameInfoPrevButtonClick(object sender, EventArgs e)
+        {
+            // TODO Add code
+        }
+
+        /// <summary>
+        /// Handles the game info next button click event.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnGameInfoNextButtonClick(object sender, EventArgs e)
+        {
+            // TODO Add code
+        }
+
+        /// <summary>
+        /// Handles the xml tab button click event.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnXmlTabButtonClick(object sender, EventArgs e)
+        {
+            // TODO Add code
+        }
+
+        /// <summary>
+        /// Handles the exit tool strip menu item click event.
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>

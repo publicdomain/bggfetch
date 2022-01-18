@@ -40,17 +40,5 @@ namespace PublicDomain
         /// </summary>
         /// <value>The size.</value>
         public Size Size { get; set; } = new Size(0, 0);
-
-        /// <summary>
-        /// Gets or sets the vertical split.
-        /// </summary>
-        /// <value>The vertical split.</value>
-        public int VerticalSplit { get; set; } = 0;
-
-        /// <summary>
-        /// Gets or sets the horizontal split.
-        /// </summary>
-        /// <value>The horizontal split.</value>
-        public int HorizontalSplit { get; set; } = 0;
     }
 }
