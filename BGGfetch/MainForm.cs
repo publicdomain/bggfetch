@@ -13,6 +13,7 @@ using System.Text;
 using System.Timers;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using HtmlAgilityPack;
 using PublicDomain;
 
 namespace BGGfetch
@@ -22,11 +23,6 @@ namespace BGGfetch
     /// </summary>
     public partial class MainForm : Form
     {
-        /// <summary>
-        /// The data table.
-        /// </summary>
-        private DataTable dataTable = null;
-
         /// <summary>
         /// The last download date time.
         /// </summary>
@@ -38,19 +34,14 @@ namespace BGGfetch
         private System.Timers.Timer fetchTimer = new System.Timers.Timer(1000);
 
         /// <summary>
-        /// The game list.
+        /// The game search web client.
         /// </summary>
-        private List<string> gameList;
+        private WebClient gameSearchWebClient = new WebClient();
 
         /// <summary>
-        /// The download item.
+        /// The game info web client.
         /// </summary>
-        private string downloadItem = string.Empty;
-
-        /// <summary>
-        /// The xml web client.
-        /// </summary>
-        private WebClient xmlWebClient = new WebClient();
+        private WebClient gameInfoWebClient = new WebClient();
 
         /// <summary>
         /// The image web client.
@@ -162,8 +153,11 @@ namespace BGGfetch
 
             /* WebClients */
 
-            this.xmlWebClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnDownloadStringCompleted);
-            this.xmlWebClient.Proxy = null;
+            this.gameSearchWebClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnGameSearchDownloadStringCompleted);
+            this.gameSearchWebClient.Proxy = null;
+
+            this.gameInfoWebClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnGameInfoDownloadStringCompleted);
+            this.gameInfoWebClient.Proxy = null;
 
             this.imageWebClient.DownloadFileCompleted += new AsyncCompletedEventHandler(OnDownloadFileCompleted);
             this.imageWebClient.Proxy = null;
@@ -206,8 +200,6 @@ namespace BGGfetch
             this.fetchedCount = 0;
             this.fetchedCountToolStripStatusLabel.Text = "0";
 
-            this.dataTable = null;
-            this.gameDataGridView.DataSource = null;
             this.gameInfoRichTextBox.Clear();
             this.gameImagePictureBox.Image = null;
 
@@ -412,33 +404,6 @@ namespace BGGfetch
         }
 
         /// <summary>
-        /// Handles the game data grid view cell click event.
-        /// </summary>
-        /// <param name="sender">Sender object.</param>
-        /// <param name="e">Event arguments.</param>
-        private void OnGameDataGridViewCellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            try
-            {
-                // Clear previous game info and image
-                this.gameInfoRichTextBox.Clear();
-                this.xmlGameResultTextBox.Clear();
-                this.gameImagePictureBox.Image = null;
-
-                // TODO Set download item [Can be refactored for e.RowIndex]
-                this.downloadItem = $"{this.gameDataGridView.SelectedRows[0].Cells[0].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[1].Value.ToString()} | {this.gameDataGridView.SelectedRows[0].Cells[2].Value.ToString()}";
-
-                // Start timer
-                this.fetchTimer.Start();
-            }
-            catch
-            {
-                // Let it fall through
-                ;
-            }
-        }
-
-        /// <summary>
         /// Gets the name of the valid directory.
         /// </summary>
         /// <returns>The valid directory name.</returns>
@@ -481,84 +446,16 @@ namespace BGGfetch
                 this.ApiCountToolStripStatusLabel.Text = "OK";
             }
 
-            // Skip if webclient is busy
-            if (this.xmlWebClient.IsBusy)
-            {
-                goto exitAndRestart;
-            }
-
-            // Check there's something to work with
-            if (this.downloadItem.Length == 0)
-            {
-                goto exitAndRestart;
-            }
-
-            /* Search or fetch game info */
-
-            var xml = string.Empty;
-
-            var item = this.downloadItem.Split(new string[] { " | " }, StringSplitOptions.None);
-
-            var action = item[0];
-
-            // Discern by action
-            if (action == "search")
-            {
-                /* Search game */
-
-                try
-                {
-                    var title = item[1];
-
-                    this.resultToolStripStatusLabel.Text = $"Searching for: \"{title}\"...";
-
-                    // Set target uri
-                    this.targetUri = new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(title)}");
-
-                    // Download xml for game id
-                    this.xmlWebClient.DownloadStringAsync(this.targetUri);
-                }
-                catch (Exception ex)
-                {
-                    // Log to file
-                    File.AppendAllText("BGGfetch-log.txt", $"{Environment.NewLine}{Environment.NewLine}Game search XML exception message:{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
-                }
-            }
-            else
-            {
-                /* Download image */
-
-                try
-                {
-                    var id = item[0];
-                    var title = $"{item[2]}-{item[1]}";
-
-                    this.resultToolStripStatusLabel.Text = $"Downloading game info: \"{title}\"...";
-
-                    // Set target uri
-                    this.targetUri = new Uri($"https://www.boardgamegeek.com/xmlapi/boardgame/{id}");
-
-                    // Download xml for game id
-                    this.xmlWebClient.DownloadStringAsync(this.targetUri);
-
-                }
-                catch (Exception ex)
-                {
-                    // Log to file
-                    File.AppendAllText("BGGfetch-log.txt", $"{Environment.NewLine}{Environment.NewLine}Image XML exception message:{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.Message}");
-                }
-            }
-
         exitAndRestart:
             fetchTimer.Start();
         }
 
         /// <summary>
-        /// Handles the download string completed event.
+        /// Handles the game search download string completed event.
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
-        private void OnDownloadStringCompleted(Object sender, DownloadStringCompletedEventArgs e)
+        private void OnGameSearchDownloadStringCompleted(Object sender, DownloadStringCompletedEventArgs e)
         {
             // Check for cancel or error
             if (!e.Cancelled && e.Error == null && this.targetUri != null)
@@ -566,217 +463,76 @@ namespace BGGfetch
                 // Declare success flag
                 bool success = false;
 
+                // Prevent drawing
+                this.gameSearchListBox.BeginUpdate();
+
                 // Set XML contents
                 string xml = (string)e.Result;
 
-                // Check for search
-                if (this.targetUri.ToString().Contains("search"))
+                // Process fetched XML
+
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+                doc.LoadHtml(xml);
+
+                /* Extract fields */
+
+                var boardgames = doc.DocumentNode.SelectNodes("//boardgame");
+
+                foreach (var game in boardgames)
                 {
-                    // Prepare data table
-                    this.dataTable = new DataTable();
+                    /* Set values */
+                    string id = game.Attributes["objectid"].Value;
+                    string year = string.Empty;
 
-                    this.dataTable.Columns.Add("Id");
-                    this.dataTable.Columns.Add("Year");
-                    this.dataTable.Columns.Add("Title");
-
-                    // Process fetched XML
-
-                    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-
-                    doc.LoadHtml(xml);
-
-                    var boardgames = doc.DocumentNode.SelectNodes("//boardgame");
-
-                    foreach (var game in boardgames)
-                    {
-                        // Set new data row
-                        DataRow dataRow = this.dataTable.NewRow();
-
-                        /* Set values */
-                        dataRow[0] = game.Attributes["objectid"].Value;
-
-                        // May not have year
-                        try
-                        {
-                            dataRow[1] = game.ChildNodes["yearpublished"].InnerText;
-
-                            // Prepend year
-                            this.descriptionPrepend = $" ({game.ChildNodes["yearpublished"].InnerText})";
-                        }
-                        catch (Exception ex)
-                        {
-                            dataRow[1] = "n/a";
-                        }
-
-                        dataRow[2] = WebUtility.HtmlDecode(game.ChildNodes["name"].InnerText);
-
-                        // Add to data table 
-                        this.dataTable.Rows.Add(dataRow);
-
-                        // Prepend to description
-                        this.descriptionPrepend = $"{dataRow[2].ToString().ToUpperInvariant()}{this.descriptionPrepend}{Environment.NewLine}https://boardgamegeek.com/boardgame/{dataRow[0].ToString()}/{Environment.NewLine + Environment.NewLine}";
-
-                    }
-
-                    // TODO)DO Update data grid view [Check clear & refreshing]
-                    this.gameDataGridView.DataSource = null;
-
-                    // Sorting
-                    this.gameDataGridView.DataSource = this.dataTable.DefaultView;
-                    foreach (DataGridViewColumn column in this.gameDataGridView.Columns)
-                    {
-                        column.SortMode = DataGridViewColumnSortMode.Automatic;
-                    }
-
-                    // Resize columns
-                    this.gameDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
-                    this.gameDataGridView.AutoResizeColumns();
-                    this.gameDataGridView.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-
-                    // Refresh/reset
-                    this.gameDataGridView.Refresh();
-                    this.gameDataGridView.ClearSelection();
-                    this.gameDataGridView.CurrentCell = null;
-
-                    // Advise user
-                    this.resultToolStripStatusLabel.Text = "Please click a gane to process";
-
-                    // Update fetched count
-                    this.fetchedCount++;
-                    this.fetchedCountToolStripStatusLabel.Text = this.fetchedCount.ToString();
-
-                    // Populate search xml text box
-                    this.xmlSearchTextBox.Text = xml;
-
-                    // Set flag
-                    success = true;
-                }
-                else
-                {
-                    // TODO Set title [Can be set on timer elapsed]
-                    var item = this.downloadItem.Split(new string[] { " | " }, StringSplitOptions.None);
-                    var title = $"{item[2]}-{item[1]}";
-
-                    // Set new datetime
-                    this.lastXmlApiDownloadDateTime = DateTime.Now;
-
-                    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-
-                    doc.LoadHtml(xml);
-
-                    // TODO Desription [Node detection/handling can be improved]
-
-                    // Prepend designers
-                    var boardgamedesigners = doc.DocumentNode.SelectNodes("//boardgamedesigner");
-
-                    List<string> boardgamedesignerList = new List<string>();
-
-                    if (boardgamedesigners != null && boardgamedesigners.Any())
-                    {
-                        foreach (var designer in boardgamedesigners)
-                        {
-                            boardgamedesignerList.Add(designer.InnerText);
-                        }
-
-                        this.descriptionPrepend += $"Designer{(boardgamedesignerList.Count > 1 ? "s" : string.Empty)}:{Environment.NewLine}{string.Join(Environment.NewLine, boardgamedesignerList)}";
-                    }
-
-                    // Prepend mechanics
-                    var boardgamemechanics = doc.DocumentNode.SelectNodes("//boardgamemechanic");
-
-                    List<string> boardgamemechanicList = new List<string>();
-
-                    if (boardgamemechanics != null && boardgamemechanics.Any())
-                    {
-                        foreach (var mechanic in boardgamemechanics)
-                        {
-                            boardgamemechanicList.Add(mechanic.InnerText);
-                        }
-
-                        this.descriptionPrepend += $"{(boardgamedesignerList.Count > 0 ? Environment.NewLine + Environment.NewLine : string.Empty)}Mechanic{(boardgamemechanicList.Count > 1 ? "s" : string.Empty)}:{Environment.NewLine}{string.Join(Environment.NewLine, boardgamemechanicList)}";
-                    }
-
-                    // Description 
+                    // May not have year
                     try
                     {
-                        var desriptionNode = doc.DocumentNode.SelectSingleNode("//description");
-
-                        string description = WebUtility.HtmlDecode(desriptionNode.InnerText);
-
-                        description = description.Replace("<br/>", Environment.NewLine).Replace("&amp;", "&").Replace("&lt;", "<").Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&apos;", "'");
-
-                        // Set description
-                        this.gameInfoRichTextBox.Text = this.descriptionPrepend + description;
+                        year = game.ChildNodes["yearpublished"].InnerText;
                     }
                     catch (Exception ex)
                     {
-                        this.gameInfoRichTextBox.Text = "Description is not present.";
+                        year = "(n/a)";
                     }
 
-                    // Reset prepend description variable
-                    this.descriptionPrepend = string.Empty;
+                    var name = WebUtility.HtmlDecode(game.ChildNodes["name"].InnerText);
 
-                    // TODO Image [Node detection/handling can be improved]
+                    // var description =
 
-                    this.imageUri = null;
-
-                    try
-                    {
-                        var image = doc.DocumentNode.SelectSingleNode("//image");
-
-                        this.imageUri = new Uri(image.InnerHtml);
-
-                        this.filePath = Path.Combine(this.directory, this.GetValidDirectoryName($"{title}_{Path.GetFileName(image.InnerHtml)}"));
-                    }
-                    catch (Exception ex)
-                    {
-                        // TODO Image not present [Advise user or log]
-                    }
-
-                    if (this.imageUri != null)
-                    {
-                        // Load previous if it exists
-                        if (File.Exists(this.filePath))
-                        {
-                            // Load picture
-                            this.gameImagePictureBox.Image = Image.FromFile(this.filePath);
-                        }
-                        else
-                        {
-                            // Advise user
-                            this.resultToolStripStatusLabel.Text = $"Fetching image for \"{title}\"...";
-
-                            // Download image
-                            this.imageWebClient.DownloadFileAsync(this.imageUri, this.filePath);
-                        }
-                    }
-
-                    // Populate game result xml text box
-                    this.xmlGameResultTextBox.Text = xml;
-
-                    // Advise user
-                    this.resultToolStripStatusLabel.Text = $"Downloaded info and image for \"{title}\"...";
-
-                    // Focus game info tab
-                    this.mainTabControl.SelectTab(this.gameInfoTabPage);
-
-                    // Set flag
-                    success = true;
+                    // Add to list
+                    this.gameSearchListBox.Items.Add($"{id} {name} {year}");
                 }
 
-                // Check for success
-                if (success)
-                {
-                    // Clear download item
-                    this.downloadItem = string.Empty;
+                // Advise user
+                this.resultToolStripStatusLabel.Text = "Please click a game to process";
 
-                    // Null target uri
-                    this.targetUri = null;
+                // Update fetched count
+                this.fetchedCount++;
+                this.fetchedCountToolStripStatusLabel.Text = this.fetchedCount.ToString();
 
-                    // Set new datetime
-                    this.lastXmlApiDownloadDateTime = DateTime.Now;
-                }
+                // Populate search xml text box
+                this.searcXmlhTextBox.Text = xml;
+
+                // Set flag
+                success = true;
             }
+
+            // Resume drawing
+            this.gameSearchListBox.EndUpdate();
+
+            // Enable
+            this.gameTextBox.Enabled = true;
+            this.fetchButton.Enabled = true;
+        }
+
+        /// <summary>
+        /// Handles the game info download string completed event.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnGameInfoDownloadStringCompleted(Object sender, DownloadStringCompletedEventArgs e)
+        {
+            // TODO Add code
         }
 
         /// <summary>
@@ -810,7 +566,7 @@ namespace BGGfetch
         /// </summary>
         /// <param name="sender">Sender object.</param>
         /// <param name="e">Event arguments.</param>
-        private void GameImagePictureBoxMouseMove(object sender, MouseEventArgs e)
+        private void OnGameImagePictureBoxMouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -899,10 +655,20 @@ namespace BGGfetch
         /// <param name="e">Event arguments.</param>
         private void OnFetchButtonClick(object sender, EventArgs e)
         {
+            // Check api is ready
+            if (this.ApiCountToolStripStatusLabel.Text != "OK")
+            {
+                MessageBox.Show("Please retry after API delay.", "API", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                this.gameTextBox.Focus();
+
+                return;
+            }
+
             // Something to work with
             if (this.gameTextBox.Text.Length == 0)
             {
-                MessageBox.Show("Please enter a game to continue.", "Game", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter a game to search.", "Game", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 this.gameTextBox.Focus();
 
@@ -919,24 +685,45 @@ namespace BGGfetch
                 return;
             }
 
+            // Disable
+            this.gameTextBox.Enabled = false;
+            this.fetchButton.Enabled = false;
+
             // Set variables
-            this.gameList = new List<string>(this.gameTextBox.Lines);
             this.directory = this.directoryTextBox.Text;
 
             // Reset
             this.gameInfoRichTextBox.Clear();
             this.gameImagePictureBox.Image = null;
-            this.dataTable = null;
-            this.gameDataGridView.DataSource = null;
+            this.gameSearchListBox.Items.Clear();
+            this.searcXmlhTextBox.Clear();
+            this.gameXmlTextBox.Clear();
 
-            // Add to download list box
-            this.downloadItem = $"search | {this.gameTextBox.Text}";
+            /* Search game */
 
             // Advise user
-            this.resultToolStripStatusLabel.Text = $"Preparing to search \"{this.gameTextBox.Text}\"...";
+            this.resultToolStripStatusLabel.Text = $"Searching for: \"{this.gameTextBox.Text}\"...";
 
-            // Start timer
-            fetchTimer.Start();
+            try
+            {
+                // Set target uri
+                this.targetUri = new Uri($"https://www.boardgamegeek.com/xmlapi/search?search={Uri.EscapeDataString(this.gameTextBox.Text)}");
+
+                // Download xml for game id
+                this.gameSearchWebClient.DownloadStringAsync(this.targetUri);
+            }
+            catch (Exception ex)
+            {
+                // Log to file
+                File.AppendAllText("BGGfetch-log.txt", $"{Environment.NewLine}{Environment.NewLine}Game search XML exception message:{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
+
+                // Advise user
+                this.resultToolStripStatusLabel.Text = $"Exception while searching. Please retry.";
+
+                // Enable
+                this.gameTextBox.Enabled = true;
+                this.fetchButton.Enabled = true;
+            }
         }
 
         /// <summary>
@@ -946,8 +733,7 @@ namespace BGGfetch
         /// <param name="e">Event arguments.</param>
         private void OnSearchTabButtonClick(object sender, EventArgs e)
         {
-            // Select next tab
-            this.mainTabControl.SelectTab(this.gameInfoTabPage);
+
         }
 
         /// <summary>
@@ -957,8 +743,7 @@ namespace BGGfetch
         /// <param name="e">Event arguments.</param>
         private void OnGameInfoPrevButtonClick(object sender, EventArgs e)
         {
-            // Select previous tab
-            this.mainTabControl.SelectTab(this.searchTabPage);
+
         }
 
         /// <summary>
@@ -968,8 +753,7 @@ namespace BGGfetch
         /// <param name="e">Event arguments.</param>
         private void OnGameInfoNextButtonClick(object sender, EventArgs e)
         {
-            // Select next tab
-            this.mainTabControl.SelectTab(this.searchXmlTabPage);
+
         }
 
         /// <summary>
@@ -979,8 +763,7 @@ namespace BGGfetch
         /// <param name="e">Event arguments.</param>
         private void OnXmlTabButtonClick(object sender, EventArgs e)
         {
-            // Select previous tab
-            this.mainTabControl.SelectTab(this.gameInfoTabPage);
+
         }
 
         /// <summary>
@@ -992,6 +775,11 @@ namespace BGGfetch
         {
             // Close program        
             this.Close();
+        }
+
+        void OnGameSearchListBoxSelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -31,7 +31,6 @@ namespace BGGfetch
         /// </summary>
         private void InitializeComponent()
         {
-        	this.components = new System.ComponentModel.Container();
         	System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
         	this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
         	this.minimizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,42 +60,39 @@ namespace BGGfetch
         	this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
         	this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
         	this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-        	this.gameInfoRichTextBox = new System.Windows.Forms.RichTextBox();
-        	this.gamesLabel = new System.Windows.Forms.Label();
-        	this.directoryLabel = new System.Windows.Forms.Label();
+        	this.tabControl1 = new System.Windows.Forms.TabControl();
+        	this.tabPage1 = new System.Windows.Forms.TabPage();
+        	this.tabPage2 = new System.Windows.Forms.TabPage();
+        	this.mainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
         	this.fetchButton = new System.Windows.Forms.Button();
-        	this.gameTextBox = new System.Windows.Forms.TextBox();
         	this.browseButton = new System.Windows.Forms.Button();
+        	this.directoryLabel = new System.Windows.Forms.Label();
+        	this.rawLabel = new System.Windows.Forms.Label();
         	this.directoryTextBox = new System.Windows.Forms.TextBox();
-        	this.mainTabControl = new System.Windows.Forms.TabControl();
-        	this.searchTabPage = new System.Windows.Forms.TabPage();
-        	this.searchTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-        	this.gameDataGridView = new System.Windows.Forms.DataGridView();
-        	this.searchTabButton = new System.Windows.Forms.Button();
-        	this.gameInfoTabPage = new System.Windows.Forms.TabPage();
-        	this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-        	this.gameInfoPrevButton = new System.Windows.Forms.Button();
-        	this.gameImagePictureBox = new System.Windows.Forms.PictureBox();
-        	this.gameInfoNextButton = new System.Windows.Forms.Button();
+        	this.gamesLabel = new System.Windows.Forms.Label();
+        	this.gameTextBox = new System.Windows.Forms.TextBox();
+        	this.gameSearchListBox = new System.Windows.Forms.ListBox();
+        	this.rawTabControl = new System.Windows.Forms.TabControl();
         	this.searchXmlTabPage = new System.Windows.Forms.TabPage();
+        	this.searcXmlhTextBox = new System.Windows.Forms.TextBox();
+        	this.gameXmlTabPage = new System.Windows.Forms.TabPage();
+        	this.gameXmlTextBox = new System.Windows.Forms.TextBox();
         	this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-        	this.xmlGameResultTextBox = new System.Windows.Forms.TextBox();
-        	this.searchXmlKabel = new System.Windows.Forms.Label();
-        	this.imageXmlLabel = new System.Windows.Forms.Label();
-        	this.xmlSearchTextBox = new System.Windows.Forms.TextBox();
-        	this.xmlTabButton = new System.Windows.Forms.Button();
-        	this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+        	this.gameInfoRichTextBox = new System.Windows.Forms.RichTextBox();
+        	this.gameImagePictureBox = new System.Windows.Forms.PictureBox();
+        	this.gameInfoLabel = new System.Windows.Forms.Label();
+        	this.gameImageLabel = new System.Windows.Forms.Label();
+        	this.mainTableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
         	this.mainMenuStrip.SuspendLayout();
         	this.mainStatusStrip.SuspendLayout();
-        	this.mainTabControl.SuspendLayout();
-        	this.searchTabPage.SuspendLayout();
-        	this.searchTableLayoutPanel.SuspendLayout();
-        	((System.ComponentModel.ISupportInitialize)(this.gameDataGridView)).BeginInit();
-        	this.gameInfoTabPage.SuspendLayout();
-        	this.tableLayoutPanel1.SuspendLayout();
-        	((System.ComponentModel.ISupportInitialize)(this.gameImagePictureBox)).BeginInit();
+        	this.tabControl1.SuspendLayout();
+        	this.mainTableLayoutPanel.SuspendLayout();
+        	this.rawTabControl.SuspendLayout();
         	this.searchXmlTabPage.SuspendLayout();
+        	this.gameXmlTabPage.SuspendLayout();
         	this.tableLayoutPanel3.SuspendLayout();
+        	((System.ComponentModel.ISupportInitialize)(this.gameImagePictureBox)).BeginInit();
+        	this.mainTableLayoutPanel2.SuspendLayout();
         	this.SuspendLayout();
         	// 
         	// mainMenuStrip
@@ -108,7 +104,7 @@ namespace BGGfetch
         	        	        	this.helpToolStripMenuItem});
         	this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
         	this.mainMenuStrip.Name = "mainMenuStrip";
-        	this.mainMenuStrip.Size = new System.Drawing.Size(414, 24);
+        	this.mainMenuStrip.Size = new System.Drawing.Size(764, 24);
         	this.mainMenuStrip.TabIndex = 41;
         	// 
         	// minimizeToolStripMenuItem
@@ -253,9 +249,9 @@ namespace BGGfetch
         	        	        	this.fetchedCountToolStripStatusLabel,
         	        	        	this.toolStripStatusLabel1,
         	        	        	this.resultToolStripStatusLabel});
-        	this.mainStatusStrip.Location = new System.Drawing.Point(0, 354);
+        	this.mainStatusStrip.Location = new System.Drawing.Point(0, 494);
         	this.mainStatusStrip.Name = "mainStatusStrip";
-        	this.mainStatusStrip.Size = new System.Drawing.Size(414, 22);
+        	this.mainStatusStrip.Size = new System.Drawing.Size(764, 22);
         	this.mainStatusStrip.SizingGrip = false;
         	this.mainStatusStrip.TabIndex = 40;
         	// 
@@ -300,8 +296,8 @@ namespace BGGfetch
         	// resultToolStripStatusLabel
         	// 
         	this.resultToolStripStatusLabel.Name = "resultToolStripStatusLabel";
-        	this.resultToolStripStatusLabel.Size = new System.Drawing.Size(161, 17);
-        	this.resultToolStripStatusLabel.Text = "Waiting for a game to fetch...";
+        	this.resultToolStripStatusLabel.Size = new System.Drawing.Size(193, 17);
+        	this.resultToolStripStatusLabel.Text = "Waiting for a search term to fetch...";
         	// 
         	// openFileDialog
         	// 
@@ -319,61 +315,78 @@ namespace BGGfetch
         	// 
         	this.folderBrowserDialog.Description = "Open high-res directory";
         	// 
-        	// gameInfoRichTextBox
+        	// tabControl1
         	// 
-        	this.gameInfoRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.gameInfoRichTextBox.Location = new System.Drawing.Point(28, 3);
-        	this.gameInfoRichTextBox.Name = "gameInfoRichTextBox";
-        	this.gameInfoRichTextBox.Size = new System.Drawing.Size(344, 143);
-        	this.gameInfoRichTextBox.TabIndex = 3;
-        	this.gameInfoRichTextBox.Text = "";
+        	this.tabControl1.Controls.Add(this.tabPage1);
+        	this.tabControl1.Controls.Add(this.tabPage2);
+        	this.tabControl1.Location = new System.Drawing.Point(0, 0);
+        	this.tabControl1.Name = "tabControl1";
+        	this.tabControl1.SelectedIndex = 0;
+        	this.tabControl1.Size = new System.Drawing.Size(200, 100);
+        	this.tabControl1.TabIndex = 0;
         	// 
-        	// gamesLabel
+        	// tabPage1
         	// 
-        	this.searchTableLayoutPanel.SetColumnSpan(this.gamesLabel, 2);
-        	this.gamesLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.gamesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        	this.gamesLabel.Location = new System.Drawing.Point(3, 0);
-        	this.gamesLabel.Name = "gamesLabel";
-        	this.gamesLabel.Size = new System.Drawing.Size(369, 25);
-        	this.gamesLabel.TabIndex = 0;
-        	this.gamesLabel.Text = "&Game:";
-        	this.gamesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+        	this.tabPage1.Location = new System.Drawing.Point(4, 22);
+        	this.tabPage1.Name = "tabPage1";
+        	this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+        	this.tabPage1.Size = new System.Drawing.Size(192, 74);
+        	this.tabPage1.TabIndex = 0;
+        	this.tabPage1.Text = "tabPage1";
+        	this.tabPage1.UseVisualStyleBackColor = true;
         	// 
-        	// directoryLabel
+        	// tabPage2
         	// 
-        	this.searchTableLayoutPanel.SetColumnSpan(this.directoryLabel, 2);
-        	this.directoryLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.directoryLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        	this.directoryLabel.Location = new System.Drawing.Point(3, 50);
-        	this.directoryLabel.Name = "directoryLabel";
-        	this.directoryLabel.Size = new System.Drawing.Size(369, 25);
-        	this.directoryLabel.TabIndex = 1;
-        	this.directoryLabel.Text = "&Directory:";
-        	this.directoryLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+        	this.tabPage2.Location = new System.Drawing.Point(4, 22);
+        	this.tabPage2.Name = "tabPage2";
+        	this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+        	this.tabPage2.Size = new System.Drawing.Size(192, 74);
+        	this.tabPage2.TabIndex = 1;
+        	this.tabPage2.Text = "tabPage2";
+        	this.tabPage2.UseVisualStyleBackColor = true;
+        	// 
+        	// mainTableLayoutPanel
+        	// 
+        	this.mainTableLayoutPanel.ColumnCount = 2;
+        	this.mainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
+        	this.mainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+        	this.mainTableLayoutPanel.Controls.Add(this.fetchButton, 0, 4);
+        	this.mainTableLayoutPanel.Controls.Add(this.browseButton, 1, 3);
+        	this.mainTableLayoutPanel.Controls.Add(this.directoryLabel, 0, 2);
+        	this.mainTableLayoutPanel.Controls.Add(this.rawLabel, 0, 6);
+        	this.mainTableLayoutPanel.Controls.Add(this.directoryTextBox, 0, 3);
+        	this.mainTableLayoutPanel.Controls.Add(this.gamesLabel, 0, 0);
+        	this.mainTableLayoutPanel.Controls.Add(this.gameTextBox, 0, 1);
+        	this.mainTableLayoutPanel.Controls.Add(this.gameSearchListBox, 0, 5);
+        	this.mainTableLayoutPanel.Controls.Add(this.rawTabControl, 0, 7);
+        	this.mainTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.mainTableLayoutPanel.Location = new System.Drawing.Point(3, 3);
+        	this.mainTableLayoutPanel.Name = "mainTableLayoutPanel";
+        	this.mainTableLayoutPanel.RowCount = 8;
+        	this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+        	this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+        	this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+        	this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+        	this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+        	this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
+        	this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+        	this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
+        	this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+        	this.mainTableLayoutPanel.Size = new System.Drawing.Size(376, 464);
+        	this.mainTableLayoutPanel.TabIndex = 45;
         	// 
         	// fetchButton
         	// 
-        	this.searchTableLayoutPanel.SetColumnSpan(this.fetchButton, 2);
+        	this.mainTableLayoutPanel.SetColumnSpan(this.fetchButton, 2);
         	this.fetchButton.Dock = System.Windows.Forms.DockStyle.Fill;
         	this.fetchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         	this.fetchButton.Location = new System.Drawing.Point(3, 103);
         	this.fetchButton.Name = "fetchButton";
-        	this.fetchButton.Size = new System.Drawing.Size(369, 44);
-        	this.fetchButton.TabIndex = 3;
+        	this.fetchButton.Size = new System.Drawing.Size(370, 44);
+        	this.fetchButton.TabIndex = 5;
         	this.fetchButton.Text = "&FETCH INFO";
         	this.fetchButton.UseVisualStyleBackColor = true;
         	this.fetchButton.Click += new System.EventHandler(this.OnFetchButtonClick);
-        	// 
-        	// gameTextBox
-        	// 
-        	this.searchTableLayoutPanel.SetColumnSpan(this.gameTextBox, 2);
-        	this.gameTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.gameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        	this.gameTextBox.Location = new System.Drawing.Point(3, 28);
-        	this.gameTextBox.Name = "gameTextBox";
-        	this.gameTextBox.Size = new System.Drawing.Size(369, 24);
-        	this.gameTextBox.TabIndex = 0;
         	// 
         	// browseButton
         	// 
@@ -381,11 +394,35 @@ namespace BGGfetch
         	this.browseButton.Location = new System.Drawing.Point(301, 76);
         	this.browseButton.Margin = new System.Windows.Forms.Padding(1);
         	this.browseButton.Name = "browseButton";
-        	this.browseButton.Size = new System.Drawing.Size(73, 23);
-        	this.browseButton.TabIndex = 2;
+        	this.browseButton.Size = new System.Drawing.Size(74, 23);
+        	this.browseButton.TabIndex = 4;
         	this.browseButton.Text = "&Browse";
         	this.browseButton.UseVisualStyleBackColor = true;
         	this.browseButton.Click += new System.EventHandler(this.OnBrowseButtonClick);
+        	// 
+        	// directoryLabel
+        	// 
+        	this.mainTableLayoutPanel.SetColumnSpan(this.directoryLabel, 2);
+        	this.directoryLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.directoryLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        	this.directoryLabel.Location = new System.Drawing.Point(3, 50);
+        	this.directoryLabel.Name = "directoryLabel";
+        	this.directoryLabel.Size = new System.Drawing.Size(370, 25);
+        	this.directoryLabel.TabIndex = 2;
+        	this.directoryLabel.Text = "&Directory:";
+        	this.directoryLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+        	// 
+        	// rawLabel
+        	// 
+        	this.mainTableLayoutPanel.SetColumnSpan(this.rawLabel, 2);
+        	this.rawLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.rawLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+        	this.rawLabel.Location = new System.Drawing.Point(3, 326);
+        	this.rawLabel.Name = "rawLabel";
+        	this.rawLabel.Size = new System.Drawing.Size(370, 20);
+        	this.rawLabel.TabIndex = 7;
+        	this.rawLabel.Text = "&Raw:";
+        	this.rawLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         	// 
         	// directoryTextBox
         	// 
@@ -395,256 +432,183 @@ namespace BGGfetch
         	this.directoryTextBox.Margin = new System.Windows.Forms.Padding(1);
         	this.directoryTextBox.Name = "directoryTextBox";
         	this.directoryTextBox.Size = new System.Drawing.Size(298, 20);
-        	this.directoryTextBox.TabIndex = 1;
+        	this.directoryTextBox.TabIndex = 3;
+        	this.directoryTextBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDirectoryTextBoxDragDrop);
+        	this.directoryTextBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.OnDirectoryTextBoxDragEnter);
         	// 
-        	// mainTabControl
+        	// gamesLabel
         	// 
-        	this.mainTabControl.Controls.Add(this.searchTabPage);
-        	this.mainTabControl.Controls.Add(this.gameInfoTabPage);
-        	this.mainTabControl.Controls.Add(this.searchXmlTabPage);
-        	this.mainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.mainTabControl.Location = new System.Drawing.Point(0, 24);
-        	this.mainTabControl.Name = "mainTabControl";
-        	this.mainTabControl.SelectedIndex = 0;
-        	this.mainTabControl.Size = new System.Drawing.Size(414, 330);
-        	this.mainTabControl.TabIndex = 43;
+        	this.mainTableLayoutPanel.SetColumnSpan(this.gamesLabel, 2);
+        	this.gamesLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.gamesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        	this.gamesLabel.Location = new System.Drawing.Point(3, 0);
+        	this.gamesLabel.Name = "gamesLabel";
+        	this.gamesLabel.Size = new System.Drawing.Size(370, 25);
+        	this.gamesLabel.TabIndex = 0;
+        	this.gamesLabel.Text = "&Search:";
+        	this.gamesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         	// 
-        	// searchTabPage
+        	// gameTextBox
         	// 
-        	this.searchTabPage.Controls.Add(this.searchTableLayoutPanel);
-        	this.searchTabPage.Location = new System.Drawing.Point(4, 22);
-        	this.searchTabPage.Name = "searchTabPage";
-        	this.searchTabPage.Padding = new System.Windows.Forms.Padding(3);
-        	this.searchTabPage.Size = new System.Drawing.Size(406, 304);
-        	this.searchTabPage.TabIndex = 0;
-        	this.searchTabPage.Text = "Search";
-        	this.searchTabPage.UseVisualStyleBackColor = true;
+        	this.mainTableLayoutPanel.SetColumnSpan(this.gameTextBox, 2);
+        	this.gameTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.gameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        	this.gameTextBox.Location = new System.Drawing.Point(3, 28);
+        	this.gameTextBox.Name = "gameTextBox";
+        	this.gameTextBox.Size = new System.Drawing.Size(370, 24);
+        	this.gameTextBox.TabIndex = 1;
         	// 
-        	// searchTableLayoutPanel
+        	// gameSearchListBox
         	// 
-        	this.searchTableLayoutPanel.ColumnCount = 3;
-        	this.searchTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80F));
-        	this.searchTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-        	this.searchTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-        	this.searchTableLayoutPanel.Controls.Add(this.gameDataGridView, 0, 5);
-        	this.searchTableLayoutPanel.Controls.Add(this.fetchButton, 0, 4);
-        	this.searchTableLayoutPanel.Controls.Add(this.browseButton, 1, 3);
-        	this.searchTableLayoutPanel.Controls.Add(this.directoryLabel, 0, 2);
-        	this.searchTableLayoutPanel.Controls.Add(this.directoryTextBox, 0, 3);
-        	this.searchTableLayoutPanel.Controls.Add(this.gamesLabel, 0, 0);
-        	this.searchTableLayoutPanel.Controls.Add(this.gameTextBox, 0, 1);
-        	this.searchTableLayoutPanel.Controls.Add(this.searchTabButton, 2, 0);
-        	this.searchTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.searchTableLayoutPanel.Location = new System.Drawing.Point(3, 3);
-        	this.searchTableLayoutPanel.Name = "searchTableLayoutPanel";
-        	this.searchTableLayoutPanel.RowCount = 6;
-        	this.searchTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-        	this.searchTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-        	this.searchTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-        	this.searchTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-        	this.searchTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
-        	this.searchTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-        	this.searchTableLayoutPanel.Size = new System.Drawing.Size(400, 298);
-        	this.searchTableLayoutPanel.TabIndex = 44;
+        	this.mainTableLayoutPanel.SetColumnSpan(this.gameSearchListBox, 2);
+        	this.gameSearchListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.gameSearchListBox.Location = new System.Drawing.Point(3, 153);
+        	this.gameSearchListBox.Name = "gameSearchListBox";
+        	this.gameSearchListBox.Size = new System.Drawing.Size(370, 170);
+        	this.gameSearchListBox.TabIndex = 6;
+        	this.gameSearchListBox.SelectedIndexChanged += new System.EventHandler(this.OnGameSearchListBoxSelectedIndexChanged);
         	// 
-        	// gameDataGridView
+        	// rawTabControl
         	// 
-        	this.gameDataGridView.AllowUserToAddRows = false;
-        	this.gameDataGridView.AllowUserToDeleteRows = false;
-        	this.gameDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-        	this.gameDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-        	this.gameDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-        	this.searchTableLayoutPanel.SetColumnSpan(this.gameDataGridView, 2);
-        	this.gameDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.gameDataGridView.Location = new System.Drawing.Point(3, 153);
-        	this.gameDataGridView.MultiSelect = false;
-        	this.gameDataGridView.Name = "gameDataGridView";
-        	this.gameDataGridView.ReadOnly = true;
-        	this.gameDataGridView.RowHeadersVisible = false;
-        	this.gameDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-        	this.gameDataGridView.Size = new System.Drawing.Size(369, 142);
-        	this.gameDataGridView.TabIndex = 4;
-        	this.gameDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnGameDataGridViewCellClick);
+        	this.mainTableLayoutPanel.SetColumnSpan(this.rawTabControl, 2);
+        	this.rawTabControl.Controls.Add(this.searchXmlTabPage);
+        	this.rawTabControl.Controls.Add(this.gameXmlTabPage);
+        	this.rawTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.rawTabControl.Location = new System.Drawing.Point(3, 349);
+        	this.rawTabControl.Name = "rawTabControl";
+        	this.rawTabControl.SelectedIndex = 0;
+        	this.rawTabControl.Size = new System.Drawing.Size(370, 112);
+        	this.rawTabControl.TabIndex = 8;
         	// 
-        	// searchTabButton
+        	// searchXmlTabPage
         	// 
-        	this.searchTabButton.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.searchTabButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        	this.searchTabButton.Location = new System.Drawing.Point(376, 1);
-        	this.searchTabButton.Margin = new System.Windows.Forms.Padding(1);
-        	this.searchTabButton.Name = "searchTabButton";
-        	this.searchTableLayoutPanel.SetRowSpan(this.searchTabButton, 6);
-        	this.searchTabButton.Size = new System.Drawing.Size(23, 296);
-        	this.searchTabButton.TabIndex = 5;
-        	this.searchTabButton.Text = ">";
-        	this.searchTabButton.UseVisualStyleBackColor = true;
-        	this.searchTabButton.Click += new System.EventHandler(this.OnSearchTabButtonClick);
+        	this.searchXmlTabPage.Controls.Add(this.searcXmlhTextBox);
+        	this.searchXmlTabPage.Location = new System.Drawing.Point(4, 22);
+        	this.searchXmlTabPage.Name = "searchXmlTabPage";
+        	this.searchXmlTabPage.Padding = new System.Windows.Forms.Padding(3);
+        	this.searchXmlTabPage.Size = new System.Drawing.Size(362, 86);
+        	this.searchXmlTabPage.TabIndex = 0;
+        	this.searchXmlTabPage.Text = "Search XML";
+        	this.searchXmlTabPage.UseVisualStyleBackColor = true;
         	// 
-        	// gameInfoTabPage
+        	// searcXmlhTextBox
         	// 
-        	this.gameInfoTabPage.Controls.Add(this.tableLayoutPanel1);
-        	this.gameInfoTabPage.Location = new System.Drawing.Point(4, 22);
-        	this.gameInfoTabPage.Name = "gameInfoTabPage";
-        	this.gameInfoTabPage.Padding = new System.Windows.Forms.Padding(3);
-        	this.gameInfoTabPage.Size = new System.Drawing.Size(406, 304);
-        	this.gameInfoTabPage.TabIndex = 2;
-        	this.gameInfoTabPage.Text = "Game info";
-        	this.gameInfoTabPage.UseVisualStyleBackColor = true;
+        	this.searcXmlhTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.searcXmlhTextBox.Location = new System.Drawing.Point(3, 3);
+        	this.searcXmlhTextBox.Multiline = true;
+        	this.searcXmlhTextBox.Name = "searcXmlhTextBox";
+        	this.searcXmlhTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+        	this.searcXmlhTextBox.Size = new System.Drawing.Size(356, 80);
+        	this.searcXmlhTextBox.TabIndex = 0;
+        	this.searcXmlhTextBox.WordWrap = false;
         	// 
-        	// tableLayoutPanel1
+        	// gameXmlTabPage
         	// 
-        	this.tableLayoutPanel1.ColumnCount = 3;
-        	this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-        	this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-        	this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-        	this.tableLayoutPanel1.Controls.Add(this.gameInfoRichTextBox, 1, 0);
-        	this.tableLayoutPanel1.Controls.Add(this.gameInfoPrevButton, 0, 0);
-        	this.tableLayoutPanel1.Controls.Add(this.gameImagePictureBox, 1, 1);
-        	this.tableLayoutPanel1.Controls.Add(this.gameInfoNextButton, 2, 0);
-        	this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-        	this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-        	this.tableLayoutPanel1.RowCount = 2;
-        	this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-        	this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-        	this.tableLayoutPanel1.Size = new System.Drawing.Size(400, 298);
-        	this.tableLayoutPanel1.TabIndex = 4;
+        	this.gameXmlTabPage.Controls.Add(this.gameXmlTextBox);
+        	this.gameXmlTabPage.Location = new System.Drawing.Point(4, 22);
+        	this.gameXmlTabPage.Name = "gameXmlTabPage";
+        	this.gameXmlTabPage.Padding = new System.Windows.Forms.Padding(3);
+        	this.gameXmlTabPage.Size = new System.Drawing.Size(362, 86);
+        	this.gameXmlTabPage.TabIndex = 1;
+        	this.gameXmlTabPage.Text = "Game XML";
+        	this.gameXmlTabPage.UseVisualStyleBackColor = true;
         	// 
-        	// gameInfoPrevButton
+        	// gameXmlTextBox
         	// 
-        	this.gameInfoPrevButton.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.gameInfoPrevButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        	this.gameInfoPrevButton.Location = new System.Drawing.Point(1, 1);
-        	this.gameInfoPrevButton.Margin = new System.Windows.Forms.Padding(1);
-        	this.gameInfoPrevButton.Name = "gameInfoPrevButton";
-        	this.tableLayoutPanel1.SetRowSpan(this.gameInfoPrevButton, 2);
-        	this.gameInfoPrevButton.Size = new System.Drawing.Size(23, 296);
-        	this.gameInfoPrevButton.TabIndex = 4;
-        	this.gameInfoPrevButton.Text = "<";
-        	this.gameInfoPrevButton.UseVisualStyleBackColor = true;
-        	this.gameInfoPrevButton.Click += new System.EventHandler(this.OnGameInfoPrevButtonClick);
+        	this.gameXmlTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.gameXmlTextBox.Location = new System.Drawing.Point(3, 3);
+        	this.gameXmlTextBox.Multiline = true;
+        	this.gameXmlTextBox.Name = "gameXmlTextBox";
+        	this.gameXmlTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+        	this.gameXmlTextBox.Size = new System.Drawing.Size(356, 80);
+        	this.gameXmlTextBox.TabIndex = 3;
+        	this.gameXmlTextBox.WordWrap = false;
+        	// 
+        	// tableLayoutPanel3
+        	// 
+        	this.tableLayoutPanel3.ColumnCount = 1;
+        	this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+        	this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+        	this.tableLayoutPanel3.Controls.Add(this.gameInfoRichTextBox, 0, 1);
+        	this.tableLayoutPanel3.Controls.Add(this.gameImagePictureBox, 0, 3);
+        	this.tableLayoutPanel3.Controls.Add(this.gameInfoLabel, 0, 0);
+        	this.tableLayoutPanel3.Controls.Add(this.gameImageLabel, 0, 2);
+        	this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.tableLayoutPanel3.Location = new System.Drawing.Point(385, 3);
+        	this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+        	this.tableLayoutPanel3.RowCount = 4;
+        	this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+        	this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+        	this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+        	this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+        	this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+        	this.tableLayoutPanel3.Size = new System.Drawing.Size(376, 464);
+        	this.tableLayoutPanel3.TabIndex = 2;
+        	// 
+        	// gameInfoRichTextBox
+        	// 
+        	this.gameInfoRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.gameInfoRichTextBox.Location = new System.Drawing.Point(3, 28);
+        	this.gameInfoRichTextBox.Name = "gameInfoRichTextBox";
+        	this.gameInfoRichTextBox.Size = new System.Drawing.Size(370, 201);
+        	this.gameInfoRichTextBox.TabIndex = 10;
+        	this.gameInfoRichTextBox.Text = "";
         	// 
         	// gameImagePictureBox
         	// 
         	this.gameImagePictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.gameImagePictureBox.Location = new System.Drawing.Point(28, 152);
+        	this.gameImagePictureBox.Location = new System.Drawing.Point(3, 260);
         	this.gameImagePictureBox.Name = "gameImagePictureBox";
-        	this.gameImagePictureBox.Size = new System.Drawing.Size(344, 143);
+        	this.gameImagePictureBox.Size = new System.Drawing.Size(370, 201);
         	this.gameImagePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
         	this.gameImagePictureBox.TabIndex = 6;
         	this.gameImagePictureBox.TabStop = false;
+        	this.gameImagePictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnGameImagePictureBoxMouseMove);
         	// 
-        	// gameInfoNextButton
+        	// gameInfoLabel
         	// 
-        	this.gameInfoNextButton.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.gameInfoNextButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        	this.gameInfoNextButton.Location = new System.Drawing.Point(376, 1);
-        	this.gameInfoNextButton.Margin = new System.Windows.Forms.Padding(1);
-        	this.gameInfoNextButton.Name = "gameInfoNextButton";
-        	this.tableLayoutPanel1.SetRowSpan(this.gameInfoNextButton, 2);
-        	this.gameInfoNextButton.Size = new System.Drawing.Size(23, 296);
-        	this.gameInfoNextButton.TabIndex = 7;
-        	this.gameInfoNextButton.Text = ">";
-        	this.gameInfoNextButton.UseVisualStyleBackColor = true;
-        	this.gameInfoNextButton.Click += new System.EventHandler(this.OnGameInfoNextButtonClick);
+        	this.gameInfoLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.gameInfoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+        	this.gameInfoLabel.Location = new System.Drawing.Point(3, 0);
+        	this.gameInfoLabel.Name = "gameInfoLabel";
+        	this.gameInfoLabel.Size = new System.Drawing.Size(370, 25);
+        	this.gameInfoLabel.TabIndex = 9;
+        	this.gameInfoLabel.Text = "&Game info:";
+        	this.gameInfoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         	// 
-        	// searchXmlTabPage
+        	// gameImageLabel
         	// 
-        	this.searchXmlTabPage.Controls.Add(this.tableLayoutPanel3);
-        	this.searchXmlTabPage.Location = new System.Drawing.Point(4, 22);
-        	this.searchXmlTabPage.Name = "searchXmlTabPage";
-        	this.searchXmlTabPage.Padding = new System.Windows.Forms.Padding(3);
-        	this.searchXmlTabPage.Size = new System.Drawing.Size(406, 304);
-        	this.searchXmlTabPage.TabIndex = 4;
-        	this.searchXmlTabPage.Text = "XML";
-        	this.searchXmlTabPage.UseVisualStyleBackColor = true;
+        	this.gameImageLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.gameImageLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
+        	this.gameImageLabel.Location = new System.Drawing.Point(3, 232);
+        	this.gameImageLabel.Name = "gameImageLabel";
+        	this.gameImageLabel.Size = new System.Drawing.Size(370, 25);
+        	this.gameImageLabel.TabIndex = 11;
+        	this.gameImageLabel.Text = "&Game image:";
+        	this.gameImageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         	// 
-        	// tableLayoutPanel3
+        	// mainTableLayoutPanel2
         	// 
-        	this.tableLayoutPanel3.ColumnCount = 2;
-        	this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-        	this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-        	this.tableLayoutPanel3.Controls.Add(this.xmlGameResultTextBox, 1, 3);
-        	this.tableLayoutPanel3.Controls.Add(this.searchXmlKabel, 1, 0);
-        	this.tableLayoutPanel3.Controls.Add(this.imageXmlLabel, 1, 2);
-        	this.tableLayoutPanel3.Controls.Add(this.xmlSearchTextBox, 1, 1);
-        	this.tableLayoutPanel3.Controls.Add(this.xmlTabButton, 0, 0);
-        	this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 3);
-        	this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-        	this.tableLayoutPanel3.RowCount = 4;
-        	this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-        	this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-        	this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-        	this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-        	this.tableLayoutPanel3.Size = new System.Drawing.Size(400, 298);
-        	this.tableLayoutPanel3.TabIndex = 2;
-        	// 
-        	// xmlGameResultTextBox
-        	// 
-        	this.xmlGameResultTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.xmlGameResultTextBox.Location = new System.Drawing.Point(28, 177);
-        	this.xmlGameResultTextBox.Multiline = true;
-        	this.xmlGameResultTextBox.Name = "xmlGameResultTextBox";
-        	this.xmlGameResultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-        	this.xmlGameResultTextBox.Size = new System.Drawing.Size(369, 118);
-        	this.xmlGameResultTextBox.TabIndex = 3;
-        	this.xmlGameResultTextBox.WordWrap = false;
-        	// 
-        	// searchXmlKabel
-        	// 
-        	this.searchXmlKabel.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.searchXmlKabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-        	this.searchXmlKabel.Location = new System.Drawing.Point(28, 0);
-        	this.searchXmlKabel.Name = "searchXmlKabel";
-        	this.searchXmlKabel.Size = new System.Drawing.Size(369, 25);
-        	this.searchXmlKabel.TabIndex = 1;
-        	this.searchXmlKabel.Text = "Search XML:";
-        	this.searchXmlKabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-        	// 
-        	// imageXmlLabel
-        	// 
-        	this.imageXmlLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.imageXmlLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-        	this.imageXmlLabel.Location = new System.Drawing.Point(28, 149);
-        	this.imageXmlLabel.Name = "imageXmlLabel";
-        	this.imageXmlLabel.Size = new System.Drawing.Size(369, 25);
-        	this.imageXmlLabel.TabIndex = 2;
-        	this.imageXmlLabel.Text = "Game XML:";
-        	this.imageXmlLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-        	// 
-        	// xmlSearchTextBox
-        	// 
-        	this.xmlSearchTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.xmlSearchTextBox.Location = new System.Drawing.Point(28, 28);
-        	this.xmlSearchTextBox.Multiline = true;
-        	this.xmlSearchTextBox.Name = "xmlSearchTextBox";
-        	this.xmlSearchTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-        	this.xmlSearchTextBox.Size = new System.Drawing.Size(369, 118);
-        	this.xmlSearchTextBox.TabIndex = 0;
-        	this.xmlSearchTextBox.WordWrap = false;
-        	// 
-        	// xmlTabButton
-        	// 
-        	this.xmlTabButton.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.xmlTabButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        	this.xmlTabButton.Location = new System.Drawing.Point(1, 1);
-        	this.xmlTabButton.Margin = new System.Windows.Forms.Padding(1);
-        	this.xmlTabButton.Name = "xmlTabButton";
-        	this.tableLayoutPanel3.SetRowSpan(this.xmlTabButton, 4);
-        	this.xmlTabButton.Size = new System.Drawing.Size(23, 296);
-        	this.xmlTabButton.TabIndex = 4;
-        	this.xmlTabButton.Text = "<";
-        	this.xmlTabButton.UseVisualStyleBackColor = true;
-        	this.xmlTabButton.Click += new System.EventHandler(this.OnXmlTabButtonClick);
+        	this.mainTableLayoutPanel2.ColumnCount = 2;
+        	this.mainTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+        	this.mainTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+        	this.mainTableLayoutPanel2.Controls.Add(this.tableLayoutPanel3, 1, 0);
+        	this.mainTableLayoutPanel2.Controls.Add(this.mainTableLayoutPanel, 0, 0);
+        	this.mainTableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.mainTableLayoutPanel2.Location = new System.Drawing.Point(0, 24);
+        	this.mainTableLayoutPanel2.Name = "mainTableLayoutPanel2";
+        	this.mainTableLayoutPanel2.RowCount = 1;
+        	this.mainTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+        	this.mainTableLayoutPanel2.Size = new System.Drawing.Size(764, 470);
+        	this.mainTableLayoutPanel2.TabIndex = 46;
         	// 
         	// MainForm
         	// 
         	this.AcceptButton = this.fetchButton;
         	this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
         	this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        	this.ClientSize = new System.Drawing.Size(414, 376);
-        	this.Controls.Add(this.mainTabControl);
+        	this.ClientSize = new System.Drawing.Size(764, 516);
+        	this.Controls.Add(this.mainTableLayoutPanel2);
         	this.Controls.Add(this.mainMenuStrip);
         	this.Controls.Add(this.mainStatusStrip);
         	this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -657,37 +621,35 @@ namespace BGGfetch
         	this.mainMenuStrip.PerformLayout();
         	this.mainStatusStrip.ResumeLayout(false);
         	this.mainStatusStrip.PerformLayout();
-        	this.mainTabControl.ResumeLayout(false);
-        	this.searchTabPage.ResumeLayout(false);
-        	this.searchTableLayoutPanel.ResumeLayout(false);
-        	this.searchTableLayoutPanel.PerformLayout();
-        	((System.ComponentModel.ISupportInitialize)(this.gameDataGridView)).EndInit();
-        	this.gameInfoTabPage.ResumeLayout(false);
-        	this.tableLayoutPanel1.ResumeLayout(false);
-        	((System.ComponentModel.ISupportInitialize)(this.gameImagePictureBox)).EndInit();
+        	this.tabControl1.ResumeLayout(false);
+        	this.mainTableLayoutPanel.ResumeLayout(false);
+        	this.mainTableLayoutPanel.PerformLayout();
+        	this.rawTabControl.ResumeLayout(false);
         	this.searchXmlTabPage.ResumeLayout(false);
+        	this.searchXmlTabPage.PerformLayout();
+        	this.gameXmlTabPage.ResumeLayout(false);
+        	this.gameXmlTabPage.PerformLayout();
         	this.tableLayoutPanel3.ResumeLayout(false);
-        	this.tableLayoutPanel3.PerformLayout();
+        	((System.ComponentModel.ISupportInitialize)(this.gameImagePictureBox)).EndInit();
+        	this.mainTableLayoutPanel2.ResumeLayout(false);
         	this.ResumeLayout(false);
         	this.PerformLayout();
         }
-        private System.Windows.Forms.Button xmlTabButton;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.Label imageXmlLabel;
-        private System.Windows.Forms.Label searchXmlKabel;
-        private System.Windows.Forms.Button searchTabButton;
-        private System.Windows.Forms.Button gameInfoNextButton;
-        private System.Windows.Forms.Button gameInfoPrevButton;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.TextBox xmlGameResultTextBox;
-        private System.Windows.Forms.TextBox xmlSearchTextBox;
+        private System.Windows.Forms.TabPage gameXmlTabPage;
         private System.Windows.Forms.TabPage searchXmlTabPage;
-        private System.Windows.Forms.TabPage gameInfoTabPage;
-        private System.Windows.Forms.TabPage searchTabPage;
-        private System.Windows.Forms.TabControl mainTabControl;
+        private System.Windows.Forms.TabControl rawTabControl;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.Label gameImageLabel;
+        private System.Windows.Forms.Label gameInfoLabel;
+        private System.Windows.Forms.TableLayoutPanel mainTableLayoutPanel2;
+        private System.Windows.Forms.ListBox gameSearchListBox;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.Label rawLabel;
+        private System.Windows.Forms.TextBox gameXmlTextBox;
+        private System.Windows.Forms.TextBox searcXmlhTextBox;
         private System.Windows.Forms.RichTextBox gameInfoRichTextBox;
-        private System.Windows.Forms.DataGridView gameDataGridView;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel ApiCountToolStripStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel ApiToolStripStatusLabel;
@@ -698,7 +660,7 @@ namespace BGGfetch
         private System.Windows.Forms.Button fetchButton;
         private System.Windows.Forms.Label directoryLabel;
         private System.Windows.Forms.Label gamesLabel;
-        private System.Windows.Forms.TableLayoutPanel searchTableLayoutPanel;
+        private System.Windows.Forms.TableLayoutPanel mainTableLayoutPanel;
         private System.Windows.Forms.ToolStripMenuItem originalThreadDonationCodercomToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel resultToolStripStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
