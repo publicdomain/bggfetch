@@ -284,9 +284,7 @@ namespace BGGfetch
             var licenseText = $"CC0 1.0 Universal (CC0 1.0) - Public Domain Dedication{Environment.NewLine}" +
                 $"https://creativecommons.org/publicdomain/zero/1.0/legalcode{Environment.NewLine}{Environment.NewLine}" +
                 $"Libraries and icons have separate licenses.{Environment.NewLine}{Environment.NewLine}" +
-                $"MarkupConverter library by figuemon - Apache 2.0 License{Environment.NewLine}" +
-                $"https://github.com/figuemon/MarkupConverter{Environment.NewLine}{Environment.NewLine}" +
-                $"HtmlAgilityPack library by zzzprojects -  MIT License{Environment.NewLine}" +
+                $"HtmlAgilityPack library by zzzprojects - MIT License{Environment.NewLine}" +
                 $"https://github.com/zzzprojects/html-agility-pack{Environment.NewLine}{Environment.NewLine}" +
                 $"Speed limit icon by Clker-Free-Vector-Images- Pixabay License{Environment.NewLine}" +
                 $"https://pixabay.com/vectors/speed-limit-car-safety-law-ahead-43796/{Environment.NewLine}{Environment.NewLine}" +
@@ -317,7 +315,7 @@ namespace BGGfetch
             var aboutForm = new AboutForm(
                 $"About {programTitle}",
                 $"{programTitle} {version.Major}.{version.Minor}.{version.Build}",
-                $"Made for: Mouser{Environment.NewLine}DonationCoder.com{Environment.NewLine}Day #18, Week #03 @ January 18, 2022",
+                $"Made for: Mouser{Environment.NewLine}DonationCoder.com{Environment.NewLine}Day #61, Week #09 @ March 02, 2022",
                 licenseText,
                 this.Icon.ToBitmap())
             {
