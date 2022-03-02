@@ -883,6 +883,9 @@ namespace BGGfetch
             // Set selected item 
             this.gameSearchListBoxSelectedItem = this.gameSearchListBox.SelectedItem.ToString();
 
+            // Focus game XML tab
+            this.rawTabControl.SelectedTab = this.gameXmlTabPage;
+
             try
             {
                 // Disable
