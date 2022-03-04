@@ -286,8 +286,8 @@ namespace BGGfetch
                 $"Libraries and icons have separate licenses.{Environment.NewLine}{Environment.NewLine}" +
                 $"HtmlAgilityPack library by zzzprojects - MIT License{Environment.NewLine}" +
                 $"https://github.com/zzzprojects/html-agility-pack{Environment.NewLine}{Environment.NewLine}" +
-                $"Speed limit icon by Clker-Free-Vector-Images- Pixabay License{Environment.NewLine}" +
-                $"https://pixabay.com/vectors/speed-limit-car-safety-law-ahead-43796/{Environment.NewLine}{Environment.NewLine}" +
+                $"Frisbee icon by Clker-Free-Vector-Images - Pixabay License{Environment.NewLine}" +
+                $"https://pixabay.com/vectors/frisbee-flying-saucer-circle-round-295056/{Environment.NewLine}{Environment.NewLine}" +
                 $"Patreon icon used according to published brand guidelines{Environment.NewLine}" +
                 $"https://www.patreon.com/brand{Environment.NewLine}{Environment.NewLine}" +
                 $"GitHub mark icon used according to published logos and usage guidelines{Environment.NewLine}" +
@@ -308,14 +308,14 @@ namespace BGGfetch
             // Set title
             string programTitle = typeof(MainForm).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyTitleAttribute>().Title;
 
-            // Set version for generating semantic version 
+            // Set version for generating semantic version
             Version version = typeof(MainForm).GetTypeInfo().Assembly.GetName().Version;
 
             // Set about form
             var aboutForm = new AboutForm(
                 $"About {programTitle}",
                 $"{programTitle} {version.Major}.{version.Minor}.{version.Build}",
-                $"Made for: Mouser{Environment.NewLine}DonationCoder.com{Environment.NewLine}Day #61, Week #09 @ March 02, 2022",
+                $"Made for: Mouser{Environment.NewLine}DonationCoder.com{Environment.NewLine}Day #62, Week #09 @ March 03, 2022",
                 licenseText,
                 this.Icon.ToBitmap())
             {
