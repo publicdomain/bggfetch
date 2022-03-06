@@ -176,6 +176,30 @@ namespace BGGfetch
                 this.Size = this.settingsData.Size;
             }
 
+            // Check radio button
+            switch (this.settingsData.SortRadioButton)
+            {
+                case "rawRadioButton":
+                    this.rawRadioButton.Checked = true;
+
+                    break;
+
+                case "idRadioButton":
+                    this.idRadioButton.Checked = true;
+
+                    break;
+
+                case "yearRadioButton":
+                    this.yearRadioButton.Checked = true;
+
+                    break;
+
+                case "nameRadioButton":
+                    this.nameRadioButton.Checked = true;
+
+                    break;
+            }
+
             /* WebClients */
 
             this.gameSearchWebClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnGameSearchDownloadStringCompleted);
@@ -996,7 +1020,8 @@ namespace BGGfetch
         /// <param name="e">Event arguments.</param>
         private void OnRadioButtonCheckedChanged(object sender, EventArgs e)
         {
-            // TODO Add code
+            // Save to settings data
+            this.settingsData.SortRadioButton = ((RadioButton)sender).Name;
         }
 
         /// <summary>
