@@ -105,6 +105,11 @@ namespace BGGfetch
         private string fetchedImagePath = string.Empty;
 
         /// <summary>
+        /// The data table.
+        /// </summary>
+        private DataTable dataTable = new DataTable();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="T:BGGfetch.MainForm"/> class.
         /// </summary>
         public MainForm()
@@ -123,6 +128,21 @@ namespace BGGfetch
             // SSL fix
             System.Net.ServicePointManager.Expect100Continue = true;
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+
+            /* Data table */
+
+            DataColumn column1 = new DataColumn();
+            DataColumn column2 = new DataColumn();
+            DataColumn column3 = new DataColumn();
+            column1.DataType = System.Type.GetType("System.Int32");
+            column1.DataType = System.Type.GetType("System.String");
+            column3.DataType = System.Type.GetType("System.Int32");
+            column1.ColumnName = "ID";
+            column2.ColumnName = "Name";
+            column2.ColumnName = "Year";
+            dataTable.Columns.Add(column1);
+            dataTable.Columns.Add(column2);
+            dataTable.Columns.Add(column3);
 
             /* Settings data */
 
@@ -174,8 +194,6 @@ namespace BGGfetch
             this.fetchTimer.Elapsed += new ElapsedEventHandler(OnTimerElapsedAsync);
 
             this.fetchTimer.Start();
-
-
         }
 
         /// <summary>
@@ -468,8 +486,8 @@ namespace BGGfetch
                 // Declare success flag
                 bool success = false;
 
-                // Prevent drawing
-                this.gameSearchListBox.BeginUpdate();
+                // Clear data table
+                this.dataTable.Rows.Clear();
 
                 // Set XML contents
                 string xml = (string)e.Result;
@@ -484,29 +502,32 @@ namespace BGGfetch
 
                 var boardgames = doc.DocumentNode.SelectNodes("//boardgame");
 
+                DataRow row = this.dataTable.NewRow();
+
                 foreach (var game in boardgames)
                 {
                     /* Set values */
-                    string id = game.Attributes["objectid"].Value;
-                    string year = string.Empty;
+
+                    row["ID"] = Convert.ToInt32(game.Attributes["objectid"].Value);
 
                     // May not have year
                     try
                     {
-                        year = game.ChildNodes["yearpublished"].InnerText;
+                        row["Year"] = Convert.ToInt32(game.ChildNodes["yearpublished"].InnerText);
                     }
                     catch (Exception ex)
                     {
-                        year = "(n/a)";
+                        row["Year"] = "(n/a)";
                     }
 
-                    var name = WebUtility.HtmlDecode(game.ChildNodes["name"].InnerText);
+                    row["Name"] = WebUtility.HtmlDecode(game.ChildNodes["name"].InnerText);
 
-                    // var description =
-
-                    // Add to list
-                    this.gameSearchListBox.Items.Add($"{id} {name} {year}");
+                    // Add to data table
+                    this.dataTable.Rows.Add(row);
                 }
+
+                // Populate list box
+                this.SortedDataTableToListBox();
 
                 // Advise user
                 this.resultToolStripStatusLabel.Text = "Please click a game to process";
@@ -522,12 +543,60 @@ namespace BGGfetch
                 success = true;
             }
 
-            // Resume drawing
-            this.gameSearchListBox.EndUpdate();
-
             // Enable
             this.gameTextBox.Enabled = true;
             this.fetchButton.Enabled = true;
+        }
+
+        /// <summary>
+        /// Sorteds the data table to list box.
+        /// </summary>
+        private void SortedDataTableToListBox()
+        {
+            // Prevent drawing
+            this.gameSearchListBox.BeginUpdate();
+
+            // Clear list box
+            this.gameSearchListBox.Items.Clear();
+
+            // Set data view
+            DataView dataView = this.dataTable.DefaultView;
+
+            // Sort data table
+            if (this.settingsData.SortRadioButton != "rawRadioButton")
+            {
+                // Sort by radio button
+                switch (this.settingsData.SortRadioButton)
+                {
+                    case "idRadioButton":
+                        dataView.Sort = "ID";
+
+                        break;
+
+                    case "yearRadioButton":
+                        dataView.Sort = "Year";
+
+                        break;
+
+                    case "nameRadioButton":
+                        dataView.Sort = "Name";
+
+                        break;
+                }
+            }
+
+            // Set sorted data table
+            DataTable sortedDataTable = dataView.ToTable();
+
+            // Data table to list box
+            for (int i = 0; i < sortedDataTable.Rows.Count; i++)
+            {
+                // Add item 
+                this.gameSearchListBox.Items.Add($"{sortedDataTable.Rows[i]["ID"]} {sortedDataTable.Rows[i]["Name"]} ({sortedDataTable.Rows[i]["Year"]})");
+            }
+
+            // Resume drawing
+            this.gameSearchListBox.EndUpdate();
         }
 
         /// <summary>
@@ -918,6 +987,16 @@ namespace BGGfetch
                 // Enable
                 this.gameSearchListBox.Enabled = true;
             }
+        }
+
+        /// <summary>
+        /// Handles the radio button checked changed event.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnRadioButtonCheckedChanged(object sender, EventArgs e)
+        {
+            // TODO Add code
         }
 
         /// <summary>

@@ -40,5 +40,11 @@ namespace PublicDomain
         /// </summary>
         /// <value>The size.</value>
         public Size Size { get; set; } = new Size(0, 0);
+
+        /// <summary>
+        /// Gets or sets the sort radio button.
+        /// </summary>
+        /// <value>The sort radio button.</value>
+        public string SortRadioButton { get; set; } = "rawRadioButton";
     }
 }
