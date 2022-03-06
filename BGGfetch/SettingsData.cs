@@ -46,5 +46,11 @@ namespace PublicDomain
         /// </summary>
         /// <value>The sort radio button.</value>
         public string SortRadioButton { get; set; } = "rawRadioButton";
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="T:PublicDomain.SettingsData"/> is desc.
+        /// </summary>
+        /// <value><c>true</c> if desc; otherwise, <c>false</c>.</value>
+        public bool Desc { get; set; } = false;
     }
 }

@@ -200,6 +200,9 @@ namespace BGGfetch
                     break;
             }
 
+            // Desc
+            this.descCheckBox.Checked = this.settingsData.Desc;
+
             /* WebClients */
 
             this.gameSearchWebClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnGameSearchDownloadStringCompleted);
@@ -540,7 +543,7 @@ namespace BGGfetch
                     // May not have year
                     try
                     {
-                        row["Year"] = game.ChildNodes["yearpublished"].InnerText; // Originally: Convert.ToInt32(game.ChildNodes["yearpublished"].InnerText). Changed to accomodate (n/a)-
+                        row["Year"] = $"({game.ChildNodes["yearpublished"].InnerText})"; // Originally: Convert.ToInt32(game.ChildNodes["yearpublished"].InnerText). Changed to accomodate (n/a)-
                     }
                     catch (Exception ex)
                     {
@@ -578,7 +581,7 @@ namespace BGGfetch
                 success = true;
             }
             else
-            { //#
+            {
                 MessageBox.Show("OnGameSearchDownloadStringCompleted error");
             }
 
@@ -592,14 +595,46 @@ namespace BGGfetch
         /// </summary>
         private void SortedDataTableToListBox()
         {
+            // Check for datatable rows
+            if (this.dataTable.Rows.Count == 0)
+            {
+                // Halt flow
+                return;
+            }
+
             // Prevent drawing
             this.gameSearchListBox.BeginUpdate();
 
             // Clear list box
             this.gameSearchListBox.Items.Clear();
 
+            // Set sorted datatable
+            DataTable sortedDataTable = this.dataTable.Clone();
+
+            sortedDataTable.Columns["ID"].DataType = System.Type.GetType("System.Int32");
+            sortedDataTable.Columns["Name"].DataType = System.Type.GetType("System.String");
+            sortedDataTable.Columns["Year"].DataType = System.Type.GetType("System.String");
+
+            // Check for desc
+            if (this.descCheckBox.Checked)
+            {
+                for (int i = this.dataTable.Rows.Count - 1; i >= 0; i--)
+                {
+                    sortedDataTable.ImportRow(this.dataTable.Rows[i]);
+                }
+            }
+            else
+            {
+                foreach (DataRow dataRow in this.dataTable.Rows)
+                {
+                    sortedDataTable.ImportRow(dataRow);
+                }
+            }
+
+            sortedDataTable.AcceptChanges();
+
             // Set data view
-            DataView dataView = this.dataTable.DefaultView;
+            DataView dataView = sortedDataTable.DefaultView;
 
             // Sort data table
             if (this.settingsData.SortRadioButton != "rawRadioButton")
@@ -608,30 +643,29 @@ namespace BGGfetch
                 switch (this.settingsData.SortRadioButton)
                 {
                     case "idRadioButton":
-                        dataView.Sort = "ID";
+                        dataView.Sort = $"ID{(this.descCheckBox.Checked ? " DESC" : string.Empty)}";
 
                         break;
 
                     case "yearRadioButton":
-                        dataView.Sort = "Year";
+                        dataView.Sort = $"Year{(this.descCheckBox.Checked ? " DESC" : string.Empty)}";
 
                         break;
 
                     case "nameRadioButton":
-                        dataView.Sort = "Name";
+                        dataView.Sort = $"Name{(this.descCheckBox.Checked ? " DESC" : string.Empty)}";
 
                         break;
                 }
             }
 
-            // Set sorted data table
-            DataTable sortedDataTable = dataView.ToTable();
+            sortedDataTable = dataView.ToTable();
 
             // Data table to list box
             for (int i = 0; i < sortedDataTable.Rows.Count; i++)
             {
-                // Add item 
-                this.gameSearchListBox.Items.Add($"{sortedDataTable.Rows[i]["ID"]} {sortedDataTable.Rows[i]["Name"]} ({sortedDataTable.Rows[i]["Year"]})");
+                // Add item
+                this.gameSearchListBox.Items.Add($"{sortedDataTable.Rows[i]["ID"]} {sortedDataTable.Rows[i]["Name"]} {sortedDataTable.Rows[i]["Year"]}");
             }
 
             // Resume drawing
@@ -1041,11 +1075,22 @@ namespace BGGfetch
             // Save to settings data
             this.settingsData.SortRadioButton = ((RadioButton)sender).Name;
 
-            // Check for datatable rows
-            if (this.dataTable.Rows.Count > 0)
-            {
-                this.SortedDataTableToListBox();
-            }
+            // Refresh list box
+            this.SortedDataTableToListBox();
+        }
+
+        /// <summary>
+        /// Ons the desc check box checked changed.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnDescCheckBoxCheckedChanged(object sender, EventArgs e)
+        {
+            // Save to settings data
+            this.settingsData.Desc = this.descCheckBox.Checked;
+
+            // Refresh list box
+            this.SortedDataTableToListBox();
         }
 
         /// <summary>
