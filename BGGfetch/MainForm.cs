@@ -135,11 +135,11 @@ namespace BGGfetch
             DataColumn column2 = new DataColumn();
             DataColumn column3 = new DataColumn();
             column1.DataType = System.Type.GetType("System.Int32");
-            column1.DataType = System.Type.GetType("System.String");
-            column3.DataType = System.Type.GetType("System.Int32");
+            column2.DataType = System.Type.GetType("System.String");
+            column3.DataType = System.Type.GetType("System.String");  // Originally System.Type.GetType("System.Int32"). Changed to accomodate (n/a)
             column1.ColumnName = "ID";
             column2.ColumnName = "Name";
-            column2.ColumnName = "Year";
+            column3.ColumnName = "Year";
             dataTable.Columns.Add(column1);
             dataTable.Columns.Add(column2);
             dataTable.Columns.Add(column3);
@@ -516,6 +516,9 @@ namespace BGGfetch
                 // Set XML contents
                 string xml = (string)e.Result;
 
+                // Populate search XML
+                this.gameXmlTextBox.Text = xml;
+
                 // Process fetched XML
 
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
@@ -526,10 +529,10 @@ namespace BGGfetch
 
                 var boardgames = doc.DocumentNode.SelectNodes("//boardgame");
 
-                DataRow row = this.dataTable.NewRow();
-
                 foreach (var game in boardgames)
                 {
+                    DataRow row = this.dataTable.NewRow();
+
                     /* Set values */
 
                     row["ID"] = Convert.ToInt32(game.Attributes["objectid"].Value);
@@ -537,14 +540,22 @@ namespace BGGfetch
                     // May not have year
                     try
                     {
-                        row["Year"] = Convert.ToInt32(game.ChildNodes["yearpublished"].InnerText);
+                        row["Year"] = game.ChildNodes["yearpublished"].InnerText; // Originally: Convert.ToInt32(game.ChildNodes["yearpublished"].InnerText). Changed to accomodate (n/a)-
                     }
                     catch (Exception ex)
                     {
                         row["Year"] = "(n/a)";
                     }
 
-                    row["Name"] = WebUtility.HtmlDecode(game.ChildNodes["name"].InnerText);
+                    // Name
+                    try
+                    {
+                        row["Name"] = WebUtility.HtmlDecode(game.ChildNodes["name"].InnerText);
+                    }
+                    catch (Exception ex)
+                    {
+                        row["Name"] = "(n/a)";
+                    }
 
                     // Add to data table
                     this.dataTable.Rows.Add(row);
@@ -565,6 +576,10 @@ namespace BGGfetch
 
                 // Set flag
                 success = true;
+            }
+            else
+            { //#
+                MessageBox.Show("OnGameSearchDownloadStringCompleted error");
             }
 
             // Enable
@@ -683,21 +698,24 @@ namespace BGGfetch
             }
 
             // Description 
+
+            string description;
+
             try
             {
                 var desriptionNode = doc.DocumentNode.SelectSingleNode("//description");
 
-                string description = WebUtility.HtmlDecode(desriptionNode.InnerText);
+                description = WebUtility.HtmlDecode(desriptionNode.InnerText);
 
                 description = description.Replace("<br/>", Environment.NewLine).Replace("&amp;", "&").Replace("&lt;", "<").Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&apos;", "'");
-
-                // Set description
-                this.gameInfoRichTextBox.Text = this.descriptionPrepend + description;
             }
             catch (Exception ex)
             {
-                this.gameInfoRichTextBox.Text = "Description is not present.";
+                description = "Game description is not present.";
             }
+
+            // Set description
+            this.gameInfoRichTextBox.Text = this.descriptionPrepend + Environment.NewLine + Environment.NewLine + description;
 
             // Reset prepend description variable
             this.descriptionPrepend = string.Empty;
@@ -1022,6 +1040,12 @@ namespace BGGfetch
         {
             // Save to settings data
             this.settingsData.SortRadioButton = ((RadioButton)sender).Name;
+
+            // Check for datatable rows
+            if (this.dataTable.Rows.Count > 0)
+            {
+                this.SortedDataTableToListBox();
+            }
         }
 
         /// <summary>
