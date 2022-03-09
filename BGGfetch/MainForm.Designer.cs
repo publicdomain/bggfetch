@@ -41,6 +41,9 @@ namespace BGGfetch
         	this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         	this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
         	this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+        	this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+        	this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+        	this.aPIDelayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         	this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         	this.alwaysOnTopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         	this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,13 +85,13 @@ namespace BGGfetch
         	this.yearRadioButton = new System.Windows.Forms.RadioButton();
         	this.nameRadioButton = new System.Windows.Forms.RadioButton();
         	this.idRadioButton = new System.Windows.Forms.RadioButton();
+        	this.descCheckBox = new System.Windows.Forms.CheckBox();
         	this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
         	this.gameInfoRichTextBox = new System.Windows.Forms.RichTextBox();
         	this.gameImagePictureBox = new System.Windows.Forms.PictureBox();
         	this.gameInfoLabel = new System.Windows.Forms.Label();
         	this.gameImageLabel = new System.Windows.Forms.Label();
         	this.mainTableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-        	this.descCheckBox = new System.Windows.Forms.CheckBox();
         	this.mainMenuStrip.SuspendLayout();
         	this.mainStatusStrip.SuspendLayout();
         	this.tabControl1.SuspendLayout();
@@ -107,7 +110,7 @@ namespace BGGfetch
         	this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
         	        	        	this.minimizeToolStripMenuItem,
         	        	        	this.fileToolStripMenuItem,
-        	        	        	this.optionsToolStripMenuItem,
+        	        	        	this.toolsToolStripMenuItem,
         	        	        	this.helpToolStripMenuItem});
         	this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
         	this.mainMenuStrip.Name = "mainMenuStrip";
@@ -184,19 +187,43 @@ namespace BGGfetch
         	this.exitToolStripMenuItem.Text = "E&xit";
         	this.exitToolStripMenuItem.Click += new System.EventHandler(this.OnExitToolStripMenuItemClick);
         	// 
+        	// toolsToolStripMenuItem
+        	// 
+        	this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+        	        	        	this.settingsToolStripMenuItem,
+        	        	        	this.optionsToolStripMenuItem});
+        	this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+        	this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+        	this.toolsToolStripMenuItem.Text = "&Tools";
+        	// 
+        	// settingsToolStripMenuItem
+        	// 
+        	this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+        	        	        	this.aPIDelayToolStripMenuItem});
+        	this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+        	this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+        	this.settingsToolStripMenuItem.Text = "&Settings";
+        	// 
+        	// aPIDelayToolStripMenuItem
+        	// 
+        	this.aPIDelayToolStripMenuItem.Name = "aPIDelayToolStripMenuItem";
+        	this.aPIDelayToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+        	this.aPIDelayToolStripMenuItem.Text = "&API Delay";
+        	this.aPIDelayToolStripMenuItem.Click += new System.EventHandler(this.OnAPIDelayToolStripMenuItemClick);
+        	// 
         	// optionsToolStripMenuItem
         	// 
         	this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
         	        	        	this.alwaysOnTopToolStripMenuItem});
         	this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-        	this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+        	this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
         	this.optionsToolStripMenuItem.Text = "&Options";
         	this.optionsToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.OnOptionsToolStripMenuItemDropDownItemClicked);
         	// 
         	// alwaysOnTopToolStripMenuItem
         	// 
         	this.alwaysOnTopToolStripMenuItem.Name = "alwaysOnTopToolStripMenuItem";
-        	this.alwaysOnTopToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+        	this.alwaysOnTopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
         	this.alwaysOnTopToolStripMenuItem.Text = "&Always on top";
         	// 
         	// helpToolStripMenuItem
@@ -601,6 +628,17 @@ namespace BGGfetch
         	this.idRadioButton.UseVisualStyleBackColor = true;
         	this.idRadioButton.CheckedChanged += new System.EventHandler(this.OnRadioButtonCheckedChanged);
         	// 
+        	// descCheckBox
+        	// 
+        	this.descCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
+        	this.descCheckBox.Location = new System.Drawing.Point(303, 3);
+        	this.descCheckBox.Name = "descCheckBox";
+        	this.descCheckBox.Size = new System.Drawing.Size(70, 19);
+        	this.descCheckBox.TabIndex = 5;
+        	this.descCheckBox.Text = "&DESC";
+        	this.descCheckBox.UseVisualStyleBackColor = true;
+        	this.descCheckBox.CheckedChanged += new System.EventHandler(this.OnDescCheckBoxCheckedChanged);
+        	// 
         	// tableLayoutPanel3
         	// 
         	this.tableLayoutPanel3.ColumnCount = 1;
@@ -679,17 +717,6 @@ namespace BGGfetch
         	this.mainTableLayoutPanel2.Size = new System.Drawing.Size(764, 470);
         	this.mainTableLayoutPanel2.TabIndex = 46;
         	// 
-        	// descCheckBox
-        	// 
-        	this.descCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
-        	this.descCheckBox.Location = new System.Drawing.Point(303, 3);
-        	this.descCheckBox.Name = "descCheckBox";
-        	this.descCheckBox.Size = new System.Drawing.Size(70, 19);
-        	this.descCheckBox.TabIndex = 5;
-        	this.descCheckBox.Text = "&DESC";
-        	this.descCheckBox.UseVisualStyleBackColor = true;
-        	this.descCheckBox.CheckedChanged += new System.EventHandler(this.OnDescCheckBoxCheckedChanged);
-        	// 
         	// MainForm
         	// 
         	this.AcceptButton = this.fetchButton;
@@ -724,6 +751,9 @@ namespace BGGfetch
         	this.ResumeLayout(false);
         	this.PerformLayout();
         }
+        private System.Windows.Forms.ToolStripMenuItem aPIDelayToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.CheckBox descCheckBox;
         private System.Windows.Forms.RadioButton idRadioButton;
         private System.Windows.Forms.RadioButton nameRadioButton;

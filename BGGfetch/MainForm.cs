@@ -14,6 +14,7 @@ using System.Timers;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using HtmlAgilityPack;
+using Microsoft.VisualBasic;
 using PublicDomain;
 
 namespace BGGfetch
@@ -31,7 +32,7 @@ namespace BGGfetch
         /// <summary>
         /// The fetch timer.
         /// </summary>
-        private System.Timers.Timer fetchTimer = new System.Timers.Timer(1000);
+        private System.Timers.Timer fetchTimer = new System.Timers.Timer(250);
 
         /// <summary>
         /// The game search web client.
@@ -485,15 +486,23 @@ namespace BGGfetch
             TimeSpan timeDiff = DateTime.Now - this.lastXmlApiDownloadDateTime;
 
             // API seconds
-            if (timeDiff.TotalSeconds < 6)
+            if (timeDiff.TotalMilliseconds < this.settingsData.ApiDelay)
             {
-                this.ApiCountToolStripStatusLabel.Text = Math.Truncate(timeDiff.TotalSeconds).ToString();
+                string secondsDiff = Math.Truncate(timeDiff.TotalSeconds).ToString();
+
+                if (secondsDiff != this.ApiCountToolStripStatusLabel.Text)
+                {
+                    this.ApiCountToolStripStatusLabel.Text = secondsDiff;
+                }
 
                 goto exitAndRestart;
             }
             else
             {
-                this.ApiCountToolStripStatusLabel.Text = "OK";
+                if (this.ApiCountToolStripStatusLabel.Text != "OK")
+                {
+                    this.ApiCountToolStripStatusLabel.Text = "OK";
+                }
             }
 
         exitAndRestart:
@@ -1091,6 +1100,41 @@ namespace BGGfetch
 
             // Refresh list box
             this.SortedDataTableToListBox();
+        }
+
+        /// <summary>
+        /// Handles the API Delay tool strip menu item click.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
+        private void OnAPIDelayToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            // Get raw value
+            string userValue = Interaction.InputBox("Set API Delay (in milliseconds)", "Edit delay", this.settingsData.ApiDelay.ToString());
+
+            // Check length
+            if (userValue.Length == 0)
+            {
+                // Advise user
+                // MessageBox.Show("Empty API delay value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                // Halt flow
+                return;
+            }
+
+            try
+            {
+                // Get new value
+                int apiDelay = Convert.ToInt32(userValue);
+
+                // Set API delay
+                this.settingsData.ApiDelay = apiDelay;
+            }
+            catch (Exception ex)
+            {
+                // Advise user
+                MessageBox.Show($"API delay update error:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>

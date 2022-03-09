@@ -52,5 +52,11 @@ namespace PublicDomain
         /// </summary>
         /// <value><c>true</c> if desc; otherwise, <c>false</c>.</value>
         public bool Desc { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets the API delay.
+        /// </summary>
+        /// <value>The API delay.</value>
+        public int ApiDelay { get; set; } = 6000;
     }
 }
