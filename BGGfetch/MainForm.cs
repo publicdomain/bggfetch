@@ -83,7 +83,7 @@ namespace BGGfetch
         /// <summary>
         /// The description prepend.
         /// </summary>
-        private string descriptionPrepend = string.Empty;
+        private string descriptionAppend = string.Empty;
 
         /// <summary>
         /// The game search list box selected item.
@@ -109,6 +109,16 @@ namespace BGGfetch
         /// The data table.
         /// </summary>
         private DataTable dataTable = new DataTable();
+
+        /// <summary>
+        /// The name of the last game.
+        /// </summary>
+        private string lastGameName = string.Empty;
+
+        /// <summary>
+        /// The year of the last game.
+        /// </summary>
+        private string lastGameYear = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:BGGfetch.MainForm"/> class.
@@ -591,7 +601,8 @@ namespace BGGfetch
             }
             else
             {
-                MessageBox.Show("OnGameSearchDownloadStringCompleted error");
+                // Advise user
+                this.resultToolStripStatusLabel.Text = "Game search error. Please retry.";
             }
 
             // Enable
@@ -722,7 +733,7 @@ namespace BGGfetch
                     boardgamedesignerList.Add(designer.InnerText);
                 }
 
-                this.descriptionPrepend += $"Designer{(boardgamedesignerList.Count > 1 ? "s" : string.Empty)}:{Environment.NewLine}{string.Join(Environment.NewLine, boardgamedesignerList)}";
+                this.descriptionAppend += $"Designer{(boardgamedesignerList.Count > 1 ? "s" : string.Empty)}:{Environment.NewLine}{string.Join(Environment.NewLine, boardgamedesignerList)}";
             }
 
             // Prepend mechanics
@@ -737,7 +748,7 @@ namespace BGGfetch
                     boardgamemechanicList.Add(mechanic.InnerText);
                 }
 
-                this.descriptionPrepend += $"{(boardgamedesignerList.Count > 0 ? Environment.NewLine + Environment.NewLine : string.Empty)}Mechanic{(boardgamemechanicList.Count > 1 ? "s" : string.Empty)}:{Environment.NewLine}{string.Join(Environment.NewLine, boardgamemechanicList)}";
+                this.descriptionAppend += $"{(boardgamedesignerList.Count > 0 ? Environment.NewLine + Environment.NewLine : string.Empty)}Mechanic{(boardgamemechanicList.Count > 1 ? "s" : string.Empty)}:{Environment.NewLine}{string.Join(Environment.NewLine, boardgamemechanicList)}";
             }
 
             // Description 
@@ -757,11 +768,11 @@ namespace BGGfetch
                 description = "Game description is not present.";
             }
 
-            // Set description
-            this.gameInfoRichTextBox.Text = this.descriptionPrepend + Environment.NewLine + Environment.NewLine + description;
+            // Set game info text
+            this.gameInfoRichTextBox.Text = $"Name: {this.lastGameName}{Environment.NewLine}Year: {this.lastGameYear}{Environment.NewLine}{Environment.NewLine}{description}{Environment.NewLine}{Environment.NewLine}{this.descriptionAppend}";
 
             // Reset prepend description variable
-            this.descriptionPrepend = string.Empty;
+            this.descriptionAppend = string.Empty;
 
             // TODO Image [Node detection/handling can be improved]
 
@@ -1050,6 +1061,14 @@ namespace BGGfetch
                 var id = item[0];
                 var title = item[1];
 
+                // Set data row
+                DataRow[] dataRowArray = this.dataTable.Select($"ID = '{id}'");
+
+                // Set last game info
+                this.lastGameName = dataRowArray[0]["Name"].ToString();
+                this.lastGameYear = dataRowArray[0]["Year"].ToString().Replace("(", string.Empty).Replace(")", string.Empty); // TODO Can be improved.
+
+                // Update status
                 this.resultToolStripStatusLabel.Text = $"Downloading info: \"{title.Substring(0, 25)}\"...";
 
                 // Set target uri
